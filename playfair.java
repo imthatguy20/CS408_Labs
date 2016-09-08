@@ -184,8 +184,56 @@ class PlayfairCipherEncryption
         return code;
     }
 
+    /*
+    This method can be almost the same as the original encryption
+    method but the reverse since all decryption is would be the
+    opposite of encryption.
+    */
     public String decryptMessage(){
-      
+      String srcArr[] = dividTwoPairs(Source);
+      String code = new String();
+      char one;
+      char two;
+      int portionOne[] = new int[2];
+      int portionTwo[] = new int[2];
+      for (int i = 0; i < srcArr.length; i++)
+      {
+          one = srcArr[i].charAt(0);
+          two = srcArr[i].charAt(1);
+          portionOne = getDiminsions(one);
+          portionTwo = getDiminsions(two);
+          if (portionOne[0] == portionTwo[0])
+          {
+              if (portionOne[1] < 4)
+                  portionOne[1]--;
+              else
+                  portionOne[1] = 0;
+              if (portionTwo[1] > 4)
+                  portionTwo[1]--;
+              else
+                  portionTwo[1] = 0;
+          }
+          else if (portionOne[1] == portionTwo[1])
+          {
+              if (portionOne[0] > 4)
+                  portionOne[0]--;
+              else
+                  portionOne[0] = 0;
+              if (portionTwo[0] > 4)
+                  portionTwo[0]--;
+              else
+                  portionTwo[0] = 0;
+          }
+          else
+          {
+              int temp = portionOne[1];
+              portionOne[1] = portionTwo[1];
+              portionTwo[1] = temp;
+          }
+          code = code + matrix_arr[portionOne[0]][portionOne[1]]
+                  + matrix_arr[portionTwo[0]][portionTwo[1]];
+      }
+      return code;
     }
 
     public static void main(String[] args)
