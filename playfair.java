@@ -55,7 +55,7 @@ class PlayfairCipherEncryption
         matrix();
     }
 
-    // This makes the matrix and
+    // This makes a 5 x 5 matrix from the key text
     private void matrix()
     {
         int counter = 0;
