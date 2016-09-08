@@ -88,14 +88,15 @@ class PlayfairCipherEncryption
                 text = text + originalText.charAt(temp);
         }
         len = text.length();
-        for (i = 0; i < len; i = i + 2)
-        {
-            // Checks for
-            if (text.charAt(i + 1) == text.charAt(i))
-            {
-                text = text.substring(0, i + 1) + 'x' + text.substring(i + 1);
-            }
-        }
+        // Traditionally used when there are dup letters
+        // for (i = 0; i < len; i = i + 2)
+        // {
+        //     // Checks for
+        //     if (text.charAt(i + 1) == text.charAt(i))
+        //     {
+        //         text = text.substring(0, i + 1) + 'x' + text.substring(i + 1);
+        //     }
+        // }
         return text;
     }
 
@@ -155,8 +156,6 @@ class PlayfairCipherEncryption
         // Creates a set of two chars. One for the original and one for the resulting.
         int charOne[] = new int[2];
         int charTwo[] = new int[2];
-        System.out.println(Arrays.toString(charOne));
-        System.out.println(Arrays.toString(charTwo));
         for (int i = 0; i < srcArr.length; i++)
         {
             //System.out.println(Arrays.toString(srcArr));
