@@ -51,7 +51,7 @@ class PlayfairCipherEncryption
                 key = key + current;
             flag = true;
         }
-        System.out.println(key);
+        //System.out.println(key);
         matrix();
     }
 
@@ -79,6 +79,7 @@ class PlayfairCipherEncryption
         len = originalText.length();
         for (int temp = 0; temp < len; temp++)
         {
+            // If the plaintext has a 'j' it will change that to an 'i' when formatted
             if (originalText.charAt(temp) == 'j')
             {
                 text = text + 'i';
@@ -89,6 +90,7 @@ class PlayfairCipherEncryption
         len = text.length();
         for (i = 0; i < len; i = i + 2)
         {
+            // Checks for
             if (text.charAt(i + 1) == text.charAt(i))
             {
                 text = text.substring(0, i + 1) + 'x' + text.substring(i + 1);
@@ -97,7 +99,7 @@ class PlayfairCipherEncryption
         return text;
     }
 
-    private String[] dividTwoPairs(String curString)
+    private String[] dividPairs(String curString)
     {
         String original = format(curString);
         int size = original.length();
@@ -138,54 +140,68 @@ class PlayfairCipherEncryption
         return key;
     }
 
+    /*
+    Encrypts the string using the playfair cipher and appropriate
+    shifting if needed
+    */
     public String encryptMessage(String Source)
     {
         // Divides the plaintext into an array of strings of length two
-        String srcArr[] = dividTwoPairs(Source);
+        String srcArr[] = dividPairs(Source);
         String code = new String();
         char one;
         char two;
         //System.out.println(Arrays.toString(srcArr));
         // Creates a set of two chars. One for the original and one for the resulting.
-        int portionOne[] = new int[2];
-        int portionTwo[] = new int[2];
+        int charOne[] = new int[2];
+        int charTwo[] = new int[2];
+        System.out.println(Arrays.toString(charOne));
+        System.out.println(Arrays.toString(charTwo));
         for (int i = 0; i < srcArr.length; i++)
         {
+            //System.out.println(Arrays.toString(srcArr));
             one = srcArr[i].charAt(0);
             two = srcArr[i].charAt(1);
-            portionOne = getDiminsions(one);
-            portionTwo = getDiminsions(two);
-            if (portionOne[0] == portionTwo[0])
+
+            // Chars represent the two letters of the pair
+            charOne = getDiminsions(one);
+            charTwo = getDiminsions(two);
+
+            // Checks to see if the rows are the same
+            if (charOne[0] == charTwo[0])
             {
-                if (portionOne[1] < 4)
-                    portionOne[1]++;
+                if (charOne[1] < 4)
+                    charOne[1]++; // Moves down a row if they are on the same row
                 else
-                    portionOne[1] = 0;
-                if (portionTwo[1] < 4)
-                    portionTwo[1]++;
+                    charOne[1] = 0; // Back to the first row if the end is reached
+                if (charTwo[1] < 4)
+                    charTwo[1]++; // Moves down a row if they are on the same row
                 else
-                    portionTwo[1] = 0;
+                    charTwo[1] = 0; // Back to the first row if the end is reached
             }
-            else if (portionOne[1] == portionTwo[1])
+            // Checks to see if the columns are the same
+            else if (charOne[1] == charTwo[1])
             {
-                if (portionOne[0] < 4)
-                    portionOne[0]++;
+                if (charOne[0] < 4)
+                    charOne[0]++; // Shift right if not the last column.
                 else
-                    portionOne[0] = 0;
-                if (portionTwo[0] < 4)
-                    portionTwo[0]++;
+                    charOne[0] = 0; // Back to the first column if the end is reached
+                if (charTwo[0] < 4)
+                    charTwo[0]++; // Shift right if not the last column.
                 else
-                    portionTwo[0] = 0;
+                    charTwo[0] = 0; // Back to the first column if the end is reached
             }
             else
             {
-                int temp = portionOne[1];
-                portionOne[1] = portionTwo[1];
-                portionTwo[1] = temp;
+                int temp = charOne[1];
+                charOne[1] = charTwo[1];
+                charTwo[1] = temp;
             }
-            code = code + matrix_arr[portionOne[0]][portionOne[1]]
-                    + matrix_arr[portionTwo[0]][portionTwo[1]];
+            // Adds to the cipher text
+            code = code + matrix_arr[charOne[0]][charOne[1]]
+                    + matrix_arr[charTwo[0]][charTwo[1]];
         }
+        // Returns the cipher text
         return code;
     }
 
@@ -195,48 +211,49 @@ class PlayfairCipherEncryption
     opposite of encryption.
     */
     public String decryptMessage(String Source){
-      String srcArr[] = dividTwoPairs(Source);
+      String srcArr[] = dividPairs(Source);
       String code = new String();
       char one;
       char two;
-      int portionOne[] = new int[2];
-      int portionTwo[] = new int[2];
+      int charOne[] = new int[2];
+      int charTwo[] = new int[2];
       for (int i = 0; i < srcArr.length; i++)
       {
           one = srcArr[i].charAt(0);
           two = srcArr[i].charAt(1);
-          portionOne = getDiminsions(one);
-          portionTwo = getDiminsions(two);
-          if (portionOne[0] == portionTwo[0])
+          charOne = getDiminsions(one);
+          charTwo = getDiminsions(two);
+          if (charOne[0] == charTwo[0])
           {
-              if (portionOne[1] < 4)
-                  portionOne[1]--;
+              if (charOne[1] > 0)
+                  charOne[1]--;
               else
-                  portionOne[1] = 0;
-              if (portionTwo[1] > 4)
-                  portionTwo[1]--;
+                  charOne[1] = 4;
+              if (charTwo[1] > 0)
+                  charTwo[1]--;
               else
-                  portionTwo[1] = 0;
+                  charTwo[1] = 4;
           }
-          else if (portionOne[1] == portionTwo[1])
+          else if (charOne[1] == charTwo[1])
           {
-              if (portionOne[0] > 4)
-                  portionOne[0]--;
+              if (charOne[0] > 0)
+                  charOne[0]--;
               else
-                  portionOne[0] = 0;
-              if (portionTwo[0] > 4)
-                  portionTwo[0]--;
+                  charOne[0] = 4;
+              if (charTwo[0] > 0)
+                  charTwo[0]--;
               else
-                  portionTwo[0] = 0;
+                  charTwo[0] = 4;
           }
           else
           {
-              int temp = portionOne[1];
-              portionOne[1] = portionTwo[1];
-              portionTwo[1] = temp;
+              int temp = charOne[1];
+              charOne[1] = charTwo[1];
+              charTwo[1] = temp;
           }
-          code = code + matrix_arr[portionOne[0]][portionOne[1]]
-                  + matrix_arr[portionTwo[0]][portionTwo[1]];
+          code = code + matrix_arr[charOne[0]][charOne[1]]
+                  + matrix_arr[charTwo[0]][charTwo[1]];
+        //  System.out.println(code);
       }
       return code;
     }
@@ -254,6 +271,8 @@ class PlayfairCipherEncryption
         if (keyIn.length() % 2 == 0)
         {
             System.out.println("Encryption: " + x.encryptMessage(keyIn));
+            System.out.println("Decryption: "
+                    + x.decryptMessage(x.encryptMessage(keyIn)));
         }
         else
         {
