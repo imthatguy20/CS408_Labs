@@ -184,6 +184,10 @@ class PlayfairCipherEncryption
         return code;
     }
 
+    public String decryptMessage(){
+      
+    }
+
     public static void main(String[] args)
     {
         PlayfairCipherEncryption x = new PlayfairCipherEncryption();
