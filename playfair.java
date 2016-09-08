@@ -1,4 +1,4 @@
-import java.util.Scanner;
+import java.util.*;
 
 class PlayfairCipherEncryption
 {
@@ -101,6 +101,7 @@ class PlayfairCipherEncryption
     {
         String original = format(curString);
         int size = original.length();
+        // Adds an additional character to the end of the string if not even number of chars
         if (size % 2 != 0)
         {
             size++;
@@ -108,6 +109,7 @@ class PlayfairCipherEncryption
         }
         String x[] = new String[size / 2];
         int counter = 0;
+        // Cuts the string into two separate substrings
         for (int i = 0; i < size / 2; i++)
         {
             x[i] = original.substring(counter, counter + 2);
@@ -138,10 +140,13 @@ class PlayfairCipherEncryption
 
     public String encryptMessage(String Source)
     {
+        // Divides the plaintext into an array of strings of length two
         String srcArr[] = dividTwoPairs(Source);
         String code = new String();
         char one;
         char two;
+        //System.out.println(Arrays.toString(srcArr));
+        // Creates a set of two chars. One for the original and one for the resulting.
         int portionOne[] = new int[2];
         int portionTwo[] = new int[2];
         for (int i = 0; i < srcArr.length; i++)
@@ -189,7 +194,7 @@ class PlayfairCipherEncryption
     method but the reverse since all decryption is would be the
     opposite of encryption.
     */
-    public String decryptMessage(){
+    public String decryptMessage(String Source){
       String srcArr[] = dividTwoPairs(Source);
       String code = new String();
       char one;
