@@ -1,5 +1,5 @@
 import java.awt.Point;
-import java.util.Scanner;
+import java.util.*;
 
 class PlayfairCipher {
     private static char[][] charTable;
@@ -7,19 +7,29 @@ class PlayfairCipher {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-
-        String key = prompt("Enter an encryption key (min length 1): ", sc, 1);
-        String txt = prompt("Enter the message: ", sc, 1);
-        String jti = prompt("Replace J with I? y/n: ", sc, 1);
-
-        boolean changeJtoI = jti.equalsIgnoreCase("y");
-
-        createTable(key, changeJtoI);
-
-        String enc = encode(prepareText(txt, changeJtoI));
-
-        System.out.printf("%nEncoded message: %n%s%n", enc);
-        System.out.printf("%nDecoded message: %n%s%n", decode(enc));
+        // Switch statement that will allow the user to either encode or decode
+        switch (args[0]){
+          case "-e":
+            String key = prompt("Enter an encryption key (min length 1, max length 10): ", sc, 1); // Key to be used
+            String txt = prompt("Enter the message: ", sc, 1); // PT to be encrypted
+            String jti = prompt("Replace J with I? y/n: ", sc, 1); // Prompt to change 'i' to 'j' as would be normal
+            boolean changeJtoI = jti.equalsIgnoreCase("y");
+            createTable(key, changeJtoI); // Creates the table to be used for encryption
+            String enc = encode(prepareText(txt, changeJtoI)); // Encodes the message
+            System.out.printf("%nEncoded message: %n%s%n", enc);
+            break;
+          case "-d":
+            System.out.println("decode");
+            String keyDec = prompt("Enter the key used for encoding: ", sc, 1);
+            String txtDec = prompt("Enter the encoded message: ", sc, 1);
+            String jtiDec = prompt("Was J replaced with I? y/n: ", sc, 1);
+            boolean changeJtoIDec = jtiDec.equalsIgnoreCase("y");
+            createTable(keyDec, changeJtoIDec);
+            System.out.printf("%nDecoded message: %n%s%n", decode(txtDec));
+            break;
+          default:
+            throw new IllegalArgumentException("Error:  Not a valid argument");
+        }
     }
 
     private static String prompt(String promptText, Scanner sc, int minLen) {
@@ -47,7 +57,7 @@ class PlayfairCipher {
             char c = s.charAt(i);
             if (positions[c - 'A'] == null) {
                 charTable[k / 5][k % 5] = c; // Sets the position in the 2D array to be used for the matrix
-                positions[c - 'A'] = new Point(k % 5, k / 5); 
+                positions[c - 'A'] = new Point(k % 5, k / 5);
                 k++;
             }
         }
