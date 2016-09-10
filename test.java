@@ -53,10 +53,46 @@ class PlayfairCipher {
         // Prepares the text to be used for the encryption
         String s = prepareText(key + "ABCDEFGHIJKLMNOPQRSTUVWXYZ", changeJtoI);
 
+        String key = prompt("Enter an encryption key (min length 1): ", sc, 1);
+        String txt = prompt("Enter the message: ", sc, 1);
+        String jti = prompt("Replace J with I? y/n: ", sc, 1);
+
+        boolean changeJtoI = jti.equalsIgnoreCase("y");
+
+        createTable(key, changeJtoI);
+
+        String enc = encode(prepareText(txt, changeJtoI));
+
+        System.out.printf("%nEncoded message: %n%s%n", enc);
+        System.out.printf("%nDecoded message: %n%s%n", decode(enc));
+    }
+
+    private static String prompt(String promptText, Scanner sc, int minLen) {
+        String s;
+        do {
+            System.out.print(promptText);
+            s = sc.nextLine().trim();
+        } while (s.length() < minLen);
+        return s;
+    }
+
+    private static String prepareText(String s, boolean changeJtoI) {
+        s = s.toUpperCase().replaceAll("[^A-Z]", "");
+        return changeJtoI ? s.replace("J", "I") : s.replace("Q", "");
+    }
+
+    private static void createTable(String key, boolean changeJtoI) {
+        charTable = new char[5][5]; // 5 x 5 Matrix creation for the table
+        positions = new Point[26]; // Represnt the 26 different letters of the English Alphabet
+
+        // Prepares the text to be used for the encryption
+        String s = prepareText(key + "ABCDEFGHIJKLMNOPQRSTUVWXYZ", changeJtoI);
+
         for (int i = 0, k = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             if (positions[c - 'A'] == null) {
                 charTable[k / 5][k % 5] = c; // Sets the position in the 2D array to be used for the matrix
+                positions[c - 'A'] = new Point(k % 5, k / 5);
                 positions[c - 'A'] = new Point(k % 5, k / 5);
                 k++;
             }
