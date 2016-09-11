@@ -10,9 +10,9 @@ class PlayfairCipher {
         // Switch statement that will allow the user to either encode or decode
         switch (args[0]){
           case "-e":
-            String key = prompt("Enter an encryption key (min length 1, max length 10): ", sc, 1); // Key to be used
-            String txt = prompt("Enter the message: ", sc, 1); // PT to be encrypted
-            String jti = prompt("Replace J with I? y/n: ", sc, 1); // Prompt to change 'i' to 'j' as would be normal
+            String key = prompt("Enter an encryption key (min length 1, max length 10): ", sc, 1, 10); // Key to be used
+            String txt = prompt("Enter the message: ", sc, 1, 1000); // PT to be encrypted
+            String jti = prompt("Replace J with I? y/n: ", sc, 1, 1); // Prompt to change 'i' to 'j' as would be normal
             boolean changeJtoI = jti.equalsIgnoreCase("y");
             createTable(key, changeJtoI); // Creates the table to be used for encryption
             String enc = encode(prepareText(txt, changeJtoI)); // Encodes the message
@@ -20,9 +20,9 @@ class PlayfairCipher {
             break;
           case "-d":
             System.out.println("decode");
-            String keyDec = prompt("Enter the key used for encoding: ", sc, 1);
-            String txtDec = prompt("Enter the encoded message: ", sc, 1);
-            String jtiDec = prompt("Was J replaced with I? y/n: ", sc, 1);
+            String keyDec = prompt("Enter the key used for encoding: ", sc, 1, 10);
+            String txtDec = prompt("Enter the encoded message: ", sc, 1, 1000);
+            String jtiDec = prompt("Was J replaced with I? y/n: ", sc, 1, 1);
             boolean changeJtoIDec = jtiDec.equalsIgnoreCase("y");
             createTable(keyDec, changeJtoIDec);
             System.out.printf("%nDecoded message: %n%s%n", decode(txtDec));
@@ -32,12 +32,12 @@ class PlayfairCipher {
         }
     }
 
-    private static String prompt(String promptText, Scanner sc, int minLen) {
+    private static String prompt(String promptText, Scanner sc, int minLen, int maxLen) {
         String s;
         do {
             System.out.print(promptText);
             s = sc.nextLine().trim();
-        } while (s.length() < minLen);
+        } while (s.length() < minLen || s.length() > maxLen);
         return s;
     }
 
