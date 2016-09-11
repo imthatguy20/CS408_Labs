@@ -15,7 +15,7 @@ class PlayfairCipher {
             String keyEnc = prompt("Enter an encryption key (min length 1, max length 10): ", sc, 1, 10); // Key to be used
             String txtEnc = prompt("Enter the message: ", sc, 1, 1000); // PT to be encrypted
             txtEnc = txtEnc.replaceAll("\\s", ""); // Trims the whitespace from the text
-            outText = new char[txtEnc.length() - 1]; // Sets the output text to be the size of the original text
+            outText = new char[txtEnc.length()]; // Sets the output text to be the size of the original text
             /*
               Checks to see if the text contains any punctuation
               and if it does, moves it to the output text for both the
@@ -23,12 +23,10 @@ class PlayfairCipher {
             */
             for(char c: txtEnc.toCharArray()){
               if(punctuation.indexOf(c) != -1){
-                
-              }
-              else{
-
+                outText[txtEnc.indexOf(c)] = c;
               }
             }
+            System.out.println(Arrays.toString(outText));
             String jtiEnc = prompt("Replace J with I? y/n: ", sc, 1, 1); // Prompt to change 'i' to 'j' as would be normal
             boolean changeJtoIEnc = jtiEnc.equalsIgnoreCase("y");
             createTable(keyEnc, changeJtoIEnc); // Creates the table to be used for encryption
