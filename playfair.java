@@ -4,8 +4,8 @@ import java.util.*;
 class PlayfairCipher {
     private static char[][] charTable;
     private static Point[] positions;
-    private static String punctuation = ",./';:<>()@#$%^&*!?~-+_=";
-    private char[] outText;
+    private static String punctuation = ",./'|;:<>()@#$%^&*!?~-+_=";
+    private static char[] outText;
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -14,12 +14,19 @@ class PlayfairCipher {
           case "-e":
             String keyEnc = prompt("Enter an encryption key (min length 1, max length 10): ", sc, 1, 10); // Key to be used
             String txtEnc = prompt("Enter the message: ", sc, 1, 1000); // PT to be encrypted
+            txtEnc = txtEnc.replaceAll("\\s", ""); // Trims the whitespace from the text
+            outText = new char[txtEnc.length() - 1]; // Sets the output text to be the size of the original text
+            /*
+              Checks to see if the text contains any punctuation
+              and if it does, moves it to the output text for both the
+              encoded text and decoded text.
+            */
             for(char c: txtEnc.toCharArray()){
-              if(punctuation.indexOf(c)!=-1){
-
+              if(punctuation.indexOf(c) != -1){
+                
               }
               else{
-                
+
               }
             }
             String jtiEnc = prompt("Replace J with I? y/n: ", sc, 1, 1); // Prompt to change 'i' to 'j' as would be normal
