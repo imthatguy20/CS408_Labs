@@ -26,7 +26,6 @@ class PlayfairCipher {
                 outText[txtEnc.indexOf(c)] = c;
               }
             }
-            System.out.println(Arrays.toString(outText));
             String jtiEnc = prompt("Replace J with I? y/n: ", sc, 1, 1); // Prompt to change 'i' to 'j' as would be normal
             boolean changeJtoIEnc = jtiEnc.equalsIgnoreCase("y");
             createTable(keyEnc, changeJtoIEnc); // Creates the table to be used for encryption
@@ -34,12 +33,19 @@ class PlayfairCipher {
             System.out.printf("%nEncoded message: %n%s%n", enc);
             break;
           case "-d":
-            System.out.println("decode");
             String keyDec = prompt("Enter the key used for encoding: ", sc, 1, 10);
             String txtDec = prompt("Enter the encoded message: ", sc, 1, 1000);
+            outText = new char[txtDec.length()]; // Sets the output text to be the size of the original text
+            // Same function as when decoding but we don't need to trim the string
+            for(char c: txtDec.toCharArray()){
+              if(punctuation.indexOf(c) != -1){
+                outText[txtDec.indexOf(c)] = c;
+              }
+            }
             String jtiDec = prompt("Was J replaced with I? y/n: ", sc, 1, 1);
             boolean changeJtoIDec = jtiDec.equalsIgnoreCase("y");
             createTable(keyDec, changeJtoIDec);
+            txtDec = txtDec.replaceAll("\\p{P}", ""); // Removes all non-alphanumeric characters
             System.out.printf("%nDecoded message: %n%s%n", decode(txtDec));
             break;
           default:
@@ -103,11 +109,11 @@ class PlayfairCipher {
 
     /* Codec will be used for both the encryption and decryption
     the direc denotes the way that the shift will move. */
-    private static String codec(StringBuilder text, int direc) {
-        int len = text.length();
+    private static String codec(StringBuilder temp, int direc) {
+        int len = temp.length();
         for (int i = 0; i < len; i += 2) {
-            char a = text.charAt(i);
-            char b = text.charAt(i + 1);
+            char a = temp.charAt(i);
+            char b = temp.charAt(i + 1);
 
             int rowOne = positions[a - 'A'].y;
             int rowTwo = positions[b - 'A'].y;
@@ -129,11 +135,19 @@ class PlayfairCipher {
                 colOne = colTwo;
                 colTwo = tmp;
             }
-
             // Gets the character from the table and sets it to the appropriate position
-            text.setCharAt(i, charTable[rowOne][colOne]); // First
-            text.setCharAt(i + 1, charTable[rowTwo][colTwo]); // Second
+            temp.setCharAt(i, charTable[rowOne][colOne]); // First
+            temp.setCharAt(i + 1, charTable[rowTwo][colTwo]); // Second
         }
-        return text.toString();
+        // Passes the encoded/decoded text to the output text containing the special chars
+        for(int i = 0; i < temp.length(); i++){
+          if(outText[i] == 0){ // If the index is empty
+            outText[i] = temp.charAt(i);
+          }
+          else{ // If the index is occupied
+            outText[i+1] = temp.charAt(i);
+          }
+        }
+        return new String(outText);
     }
 }
