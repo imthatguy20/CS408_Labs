@@ -104,9 +104,9 @@ class PlayfairCipher {
             if (i == sb.length() - 1)
                 sb.append(sb.length() % 2 == 1 ? 'X' : "");
 
-            // Inserts an 'X' wherever there is a set of duplicate letter like 'SS'
-            // else if (sb.charAt(i) == sb.charAt(i + 1))
-            //     sb.insert(i + 1, 'X');
+            Inserts an 'X' wherever there is a set of duplicate letter like 'SS'
+            else if (sb.charAt(i) == sb.charAt(i + 1))
+                sb.insert(i + 1, 'X');
         }
         return codec(sb, 1);
     }
@@ -153,8 +153,10 @@ class PlayfairCipher {
           punctuation at an index and then insert in that position if there
           is some.  For the end of the string use plus one.  How to handle x?
         */
-        for(){
-
+        for(char c: outText){
+            if(c != 0){
+                temp.insert(outText.indexOf(c), c);
+            }
         }
         // Passes the encoded/decoded text to the output text containing the special chars
         // for(int i = 0; i < temp.length(); i++){
