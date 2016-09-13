@@ -6,6 +6,7 @@ class PlayfairCipher {
     private static Point[] positions;
     private static String punctuation = ",./'|;:<>()@#$%^&*!?~-+_=";
     private static char[] outText;
+    private static boolean qRemoved = false;
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -26,6 +27,7 @@ class PlayfairCipher {
                 outText[txtEnc.indexOf(c)] = c;
               }
             }
+            System.out.println(Arrays.toString(outText));
             String jtiEnc = prompt("Replace J with I? y/n: ", sc, 1, 1); // Prompt to change 'i' to 'j' as would be normal
             boolean changeJtoIEnc = jtiEnc.equalsIgnoreCase("y");
             createTable(keyEnc, changeJtoIEnc); // Creates the table to be used for encryption
@@ -42,6 +44,7 @@ class PlayfairCipher {
                 outText[txtDec.indexOf(c)] = c;
               }
             }
+            System.out.println(Arrays.toString(outText));
             String jtiDec = prompt("Was J replaced with I? y/n: ", sc, 1, 1);
             boolean changeJtoIDec = jtiDec.equalsIgnoreCase("y");
             createTable(keyDec, changeJtoIDec);
@@ -64,7 +67,13 @@ class PlayfairCipher {
 
     private static String prepareText(String s, boolean changeJtoI) {
         s = s.toUpperCase().replaceAll("[^A-Z]", "");
-        return changeJtoI ? s.replace("J", "I") : s.replace("Q", "");
+        if(changeJtoI){
+          return s.replace("J", "I");
+        }
+        else{
+          qRemoved = true;
+          return s.replace("Q", "");
+        }
     }
 
     private static void createTable(String key, boolean changeJtoI) {
@@ -96,8 +105,8 @@ class PlayfairCipher {
                 sb.append(sb.length() % 2 == 1 ? 'X' : "");
 
             // Inserts an 'X' wherever there is a set of duplicate letter like 'SS'
-            else if (sb.charAt(i) == sb.charAt(i + 1))
-                sb.insert(i + 1, 'X');
+            // else if (sb.charAt(i) == sb.charAt(i + 1))
+            //     sb.insert(i + 1, 'X');
         }
         return codec(sb, 1);
     }
@@ -139,15 +148,28 @@ class PlayfairCipher {
             temp.setCharAt(i, charTable[rowOne][colOne]); // First
             temp.setCharAt(i + 1, charTable[rowTwo][colTwo]); // Second
         }
-        // Passes the encoded/decoded text to the output text containing the special chars
-        for(int i = 0; i < temp.length(); i++){
-          if(outText[i] == 0){ // If the index is empty
-            outText[i] = temp.charAt(i);
-          }
-          else{ // If the index is occupied
-            outText[i+1] = temp.charAt(i);
-          }
+        /*
+          For loop with move through the outText and check if there is
+          punctuation at an index and then insert in that position if there
+          is some.  For the end of the string use plus one.  How to handle x?
+        */
+        for(){
+
         }
+        // Passes the encoded/decoded text to the output text containing the special chars
+        // for(int i = 0; i < temp.length(); i++){
+        //   if(outText[i] == '\0'){ // If the index is empty
+        //     outText[i] = temp.charAt(i);
+        //     // System.out.println("Null");
+        //     // System.out.println(Arrays.toString(outText));
+        //   }
+        //   else{ // If the index is occupied
+        //     outText[i+1] = temp.charAt(i);
+        //     // System.out.println("Not");
+        //     // System.out.println(Arrays.toString(outText));
+        //   }
+        // }
+        System.out.println(Arrays.toString(outText));
         return new String(outText);
     }
 }
