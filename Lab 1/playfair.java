@@ -2,8 +2,8 @@ import java.awt.Point;
 import java.util.*;
 
 class PlayfairCipher {
-    private static char[][] charTable;
-    private static Point[] positions;
+    private static char[][] charMatrix;
+    private static Point[] xyPoints;
     private static String punctuation = ",./'|;:<>()@#$%^&*!?~-+_=";
     private static char[] outText;
     private static boolean qRemoved = false;
@@ -77,17 +77,17 @@ class PlayfairCipher {
     }
 
     private static void createTable(String key, boolean changeJtoI) {
-        charTable = new char[5][5]; // 5 x 5 Matrix creation for the table
-        positions = new Point[26]; // Represnt the 26 different letters of the English Alphabet
+        charMatrix = new char[5][5]; // 5 x 5 Matrix creation for the table
+        xyPoints = new Point[26]; // Represnt the 26 different letters of the English Alphabet
 
         // Prepares the text to be used for the encryption
         String s = prepareText(key + "ABCDEFGHIJKLMNOPQRSTUVWXYZ", changeJtoI);
 
         for (int i = 0, k = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-            if (positions[c - 'A'] == null) {
-                charTable[k / 5][k % 5] = c; // Sets the position in the 2D array to be used for the matrix
-                positions[c - 'A'] = new Point(k % 5, k / 5);
+            if (xyPoints[c - 'A'] == null) {
+                charMatrix[k / 5][k % 5] = c; // Sets the position in the 2D array to be used for the matrix
+                xyPoints[c - 'A'] = new Point(k % 5, k / 5);
                 k++;
             }
         }
@@ -124,10 +124,10 @@ class PlayfairCipher {
             char a = temp.charAt(i);
             char b = temp.charAt(i + 1);
 
-            int rowOne = positions[a - 'A'].y;
-            int rowTwo = positions[b - 'A'].y;
-            int colOne = positions[a - 'A'].x;
-            int colTwo = positions[b - 'A'].x;
+            int rowOne = xyPoints[a - 'A'].y;
+            int rowTwo = xyPoints[b - 'A'].y;
+            int colOne = xyPoints[a - 'A'].x;
+            int colTwo = xyPoints[b - 'A'].x;
 
             // Shifts the columns to the right if the rows are equivalent
             if (rowOne == rowTwo) {
@@ -145,11 +145,11 @@ class PlayfairCipher {
                 colTwo = tmp;
             }
             // Gets the character from the table and sets it to the appropriate position
-            temp.setCharAt(i, charTable[rowOne][colOne]); // First
-            temp.setCharAt(i + 1, charTable[rowTwo][colTwo]); // Second
+            temp.setCharAt(i, charMatrix[rowOne][colOne]); // First
+            temp.setCharAt(i + 1, charMatrix[rowTwo][colTwo]); // Second
         }
         /*
-          Inserts the punctuation back into the string at the index 
+          Inserts the punctuation back into the string at the index
 	  it belongs in.
         */
 	int i = 0;
@@ -162,4 +162,3 @@ class PlayfairCipher {
         return temp.toString();
     }
 }
-
