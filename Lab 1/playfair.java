@@ -10,7 +10,7 @@ class PlayfairCipher {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        // Switch statement that will allow the user to either encode or decode
+        // Switch statement that will allow the user to either encodePlainText or decodeCipherText
         switch (args[0]){
           case "-e":
             String keyEnc = prompt("Enter an encryption key (min length 1, max length 10): ", sc, 1, 10); // Key to be used
@@ -20,7 +20,7 @@ class PlayfairCipher {
             /*
               Checks to see if the text contains any punctuation
               and if it does, moves it to the output text for both the
-              encoded text and decoded text.
+              encodePlainTextd text and decodeCipherTextd text.
             */
             for(char c: txtEnc.toCharArray()){
               if(punctuation.indexOf(c) != -1){
@@ -28,11 +28,9 @@ class PlayfairCipher {
               }
             }
             System.out.println(Arrays.toString(outText));
-            String jtiEnc = prompt("Replace J with I? y/n: ", sc, 1, 1); // Prompt to change 'i' to 'j' as would be normal
-            boolean changeJtoIEnc = jtiEnc.equalsIgnoreCase("y");
-            createTable(keyEnc, changeJtoIEnc); // Creates the table to be used for encryption
-            String enc = encode(prepareText(txtEnc, changeJtoIEnc)); // Encodes the message
-            System.out.printf("%nEncoded message: %n%s%n", enc);
+            createTable(keyEnc); // Creates the table to be used for encryption
+            String enc = encodePlainText(formatTextForMatrix(txtEnc)); // encodePlainTexts the message
+            System.out.printf("%nencoded message: %n%s%n", enc);
             break;
           case "-d":
             String keyDec = prompt("Enter the key used for encoding: ", sc, 1, 10);
@@ -45,11 +43,9 @@ class PlayfairCipher {
               }
             }
             System.out.println(Arrays.toString(outText));
-            String jtiDec = prompt("Was J replaced with I? y/n: ", sc, 1, 1);
-            boolean changeJtoIDec = jtiDec.equalsIgnoreCase("y");
-            createTable(keyDec, changeJtoIDec);
+            createTable(keyDec);
             txtDec = txtDec.replaceAll("\\p{P}", ""); // Removes all non-alphanumeric characters
-            System.out.printf("%nDecoded message: %n%s%n", decode(txtDec));
+            System.out.printf("%ndecodeCipherTextd message: %n%s%n", decodeCipherText(txtDec));
             break;
           default:
             throw new IllegalArgumentException("Error:  Not a valid argument");
@@ -65,23 +61,17 @@ class PlayfairCipher {
         return s;
     }
 
-    private static String prepareText(String s, boolean changeJtoI) {
+    private static String formatTextForMatrix(String s) {
         s = s.toUpperCase().replaceAll("[^A-Z]", "");
-        if(changeJtoI){
-          return s.replace("J", "I");
-        }
-        else{
-          qRemoved = true;
-          return s.replace("Q", "");
-        }
+        return s.replace("J", "I").replace("Q", "");
     }
 
-    private static void createTable(String key, boolean changeJtoI) {
+    private static void createTable(String key) {
         charMatrix = new char[5][5]; // 5 x 5 Matrix creation for the table
         xyPoints = new Point[26]; // Represnt the 26 different letters of the English Alphabet
 
         // Prepares the text to be used for the encryption
-        String s = prepareText(key + "ABCDEFGHIJKLMNOPQRSTUVWXYZ", changeJtoI);
+        String s = formatTextForMatrix(key + "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
         for (int i = 0, k = 0; i < s.length(); i++) {
             char c = s.charAt(i);
@@ -93,32 +83,32 @@ class PlayfairCipher {
         }
     }
 
-    /* Responsible for encoding the string and making sure that the encoded text
+    /* Responsible for encoding the string and making sure that the encodePlainTextd text
     will be properly formatted when when passed to the codec to finish encoding
     the plaintext message */
-    private static String encode(String s) {
-        StringBuilder sb = new StringBuilder(s); // Consists of the pre-formatted text made earlier
+    private static String encodePlainText(String s) {
+        StringBuilder encodedMessage = new StringBuilder(s); // Consists of the pre-formatted text made earlier
 
-        for (int i = 0; i < sb.length(); i += 2) {
+        for (int i = 0; i < encodedMessage.length(); i += 2) {
             // If the length of the cipher text is odd it will append an 'X' to the end
-            if (i == sb.length() - 1)
-                sb.append(sb.length() % 2 == 1 ? 'X' : "");
+            if (i == encodedMessage.length() - 1)
+                encodedMessage.append(encodedMessage.length() % 2 == 1 ? 'X' : "");
 
             // Inserts an 'X' wherever there is a set of duplicate letter like 'SS'
-            else if (sb.charAt(i) == sb.charAt(i + 1))
-                sb.insert(i + 1, 'X');
+            else if (encodedMessage.charAt(i) == encodedMessage.charAt(i + 1))
+                encodedMessage.insert(i + 1, 'X');
         }
-        return codec(sb, 1);
+        return playfairCodec(encodedMessage, 1);
     }
 
-    // Decodes the string using the codec method defined later
-    private static String decode(String s) {
-        return codec(new StringBuilder(s), 4);
+    // decodeCipherTexts the string using the codec method defined later
+    private static String decodeCipherText(String cipherText) {
+        return playfairCodec(new StringBuilder(cipherText), 4);
     }
 
     /* Codec will be used for both the encryption and decryption
-    the direc denotes the way that the shift will move. */
-    private static String codec(StringBuilder temp, int direc) {
+    the direction denotes the way that the shift will move. */
+    private static String playfairCodec(StringBuilder temp, int direction) {
         int len = temp.length();
         for (int i = 0; i < len; i += 2) {
             char a = temp.charAt(i);
@@ -131,13 +121,13 @@ class PlayfairCipher {
 
             // Shifts the columns to the right if the rows are equivalent
             if (rowOne == rowTwo) {
-                colOne = (colOne + direc) % 5;
-                colTwo = (colTwo + direc) % 5;
+                colOne = (colOne + direction) % 5;
+                colTwo = (colTwo + direction) % 5;
 
             // Shifts the rows down if the columns are equivalent
             } else if (colOne == colTwo) {
-                rowOne = (rowOne + direc) % 5;
-                rowTwo = (rowTwo + direc) % 5;
+                rowOne = (rowOne + direction) % 5;
+                rowTwo = (rowTwo + direction) % 5;
 
             } else {
                 int tmp = colOne;
