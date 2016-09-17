@@ -13,8 +13,15 @@ class PlayfairCipher {
         // Switch statement that will allow the user to either encodePlainText or decodeCipherText
         switch (args[0]){
           case "-e":
-            String keyEnc = prompt("Enter an encryption key (min length 1, max length 10): ", sc, 1, 10); // Key to be used
-            String txtEnc = prompt("Enter the message: ", sc, 1, 1000); // PT to be encrypted
+            String keyEnc, txtEnc;
+            do{
+              System.out.println("Enter the key to use for encryption: ");
+              keyEnc = sc.nextLine().trim();
+            } while (keyEnc.length() < 1 || keyEnc.length() > 10);
+            do {
+              System.out.println("Enter the text to be encrypted: ");
+              txtEnc = sc.nextLine().trim();
+            } while (txtEnc.length() < 1);
             txtEnc = txtEnc.replaceAll("\\s", ""); // Trims the whitespace from the text
             outText = new char[txtEnc.length()]; // Sets the output text to be the size of the original text
             /*
@@ -27,14 +34,20 @@ class PlayfairCipher {
                 outText[txtEnc.indexOf(c)] = c;
               }
             }
-            System.out.println(Arrays.toString(outText));
             createTable(keyEnc); // Creates the table to be used for encryption
             String enc = encodePlainText(formatTextForMatrix(txtEnc)); // encodePlainTexts the message
             System.out.printf("%nencoded message: %n%s%n", enc);
             break;
           case "-d":
-            String keyDec = prompt("Enter the key used for encoding: ", sc, 1, 10);
-            String txtDec = prompt("Enter the encoded message: ", sc, 1, 1000);
+            String keyDec, txtDec;
+            do{
+              System.out.println("Enter the key to used for encryption: ");
+              keyDec = sc.nextLine().trim();
+            } while (keyDec.length() < 1 || keyDec.length() > 10);
+            do {
+              System.out.println("Enter the text to be decrypted: ");
+              txtDec = sc.nextLine().trim();
+            } while (txtDec.length() < 1);
             outText = new char[txtDec.length()]; // Sets the output text to be the size of the original text
             // Same function as when decoding but we don't need to trim the string
             for(char c: txtDec.toCharArray()){
@@ -42,7 +55,6 @@ class PlayfairCipher {
                 outText[txtDec.indexOf(c)] = c;
               }
             }
-            System.out.println(Arrays.toString(outText));
             createTable(keyDec);
             txtDec = txtDec.replaceAll("\\p{P}", ""); // Removes all non-alphanumeric characters
             System.out.printf("%ndecodeCipherTextd message: %n%s%n", decodeCipherText(txtDec));
@@ -50,15 +62,6 @@ class PlayfairCipher {
           default:
             throw new IllegalArgumentException("Error:  Not a valid argument");
         }
-    }
-
-    private static String prompt(String promptText, Scanner sc, int minLen, int maxLen) {
-        String s;
-        do {
-            System.out.print(promptText);
-            s = sc.nextLine().trim();
-        } while (s.length() < minLen || s.length() > maxLen);
-        return s;
     }
 
     private static String formatTextForMatrix(String s) {
@@ -114,10 +117,17 @@ class PlayfairCipher {
             char a = temp.charAt(i);
             char b = temp.charAt(i + 1);
 
-            int rowOne = xyPoints[a - 'A'].y;
-            int rowTwo = xyPoints[b - 'A'].y;
-            int colOne = xyPoints[a - 'A'].x;
-            int colTwo = xyPoints[b - 'A'].x;
+            // Used to get the numeric index of the character in the alphabet
+            int aAlphabetIndex = ((int) a) - 65;
+            int bAlphabetIndex = ((int) b) - 65;
+
+            // First character in the pair
+            int rowOne = xyPoints[aAlphabetIndex].y;
+            int colOne = xyPoints[aAlphabetIndex].x;
+
+            // Second character in the pair
+            int rowTwo = xyPoints[bAlphabetIndex].y;
+            int colTwo = xyPoints[bAlphabetIndex].x;
 
             // Shifts the columns to the right if the rows are equivalent
             if (rowOne == rowTwo) {
