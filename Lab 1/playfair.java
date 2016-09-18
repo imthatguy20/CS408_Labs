@@ -74,14 +74,16 @@ class PlayfairCipher {
         xyPoints = new Point[26]; // Represnt the 26 different letters of the English Alphabet
 
         // Prepares the text to be used for the encryption
-        String s = formatTextForMatrix(key + "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+        String preMatrixString = formatTextForMatrix(key + "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
-        for (int i = 0, k = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
-            if (xyPoints[c - 'A'] == null) {
-                charMatrix[k / 5][k % 5] = c; // Sets the position in the 2D array to be used for the matrix
-                xyPoints[c - 'A'] = new Point(k % 5, k / 5);
-                k++;
+        for (int i = 0; i < s.length(); i++) {
+            int matrixIndex = 0;
+            char c = preMatrixString.charAt(i); // Gets the char at the index 
+            int alphabetIndex = ((int) c) - 65; // Gets the index of the char in the alphabet
+            if (xyPoints[alphabetIndex] == null) {
+                charMatrix[matrixIndex / 5][matrixIndex % 5] = c; // Sets the position in the 2D array to be used for the matrix
+                xyPoints[alphabetIndex] = new Point(matrixIndex % 5, matrixIndex / 5);
+                matrixIndex++;
             }
         }
     }
