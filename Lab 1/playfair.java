@@ -3,7 +3,7 @@ import java.util.*;
 
 class PlayfairCipher {
     private static char[][] charMatrix;
-    private static Point[] xyPoints;
+    private static Point[] alphabetPoints;
     private static String punctuation = ",./'|;:<>()@#$%^&*!?~-+_=";
     private static char[] outText;
     private static boolean qRemoved = false;
@@ -71,19 +71,24 @@ class PlayfairCipher {
 
     private static void createTable(String key) {
         charMatrix = new char[5][5]; // 5 x 5 Matrix creation for the table
-        xyPoints = new Point[26]; // Represnt the 26 different letters of the English Alphabet
+        alphabetPoints = new Point[26]; // Represnt the 26 different letters of the English Alphabet
 
         // Prepares the text to be used for the encryption
         String preMatrixString = formatTextForMatrix(key + "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
-        for (int i = 0; i < s.length(); i++) {
-            int matrixIndex = 0;
-            char c = preMatrixString.charAt(i); // Gets the char at the index 
-            int alphabetIndex = ((int) c) - 65; // Gets the index of the char in the alphabet
-            if (xyPoints[alphabetIndex] == null) {
-                charMatrix[matrixIndex / 5][matrixIndex % 5] = c; // Sets the position in the 2D array to be used for the matrix
-                xyPoints[alphabetIndex] = new Point(matrixIndex % 5, matrixIndex / 5);
-                matrixIndex++;
+        int matrixPos = 0; 
+        
+        for (int i = 0; i < preMatrixString.length(); i++) {
+            char c = preMatrixString.charAt(i);
+            int alphabetIndex = ((int) c) - 65; // Gets the index of the letter in the alphabet
+            if (alphabetPoints[alphabetIndex] == null) { // Checks to see if the letter has been used already or not
+                charMatrix[matrixPos / 5][matrixPos % 5] = c; // Sets the position in the 2D array to be used for the matrix
+                /*
+                    Allows for the coordinates for the specific point in the key matrix to be saved at the particular 
+                    index of the alphabet corresponding to the character.  
+                */
+                alphabetPoints[alphabetIndex] = new Point(matrixPos % 5, matrixPos / 5); 
+                matrixPos++;
             }
         }
     }
@@ -96,8 +101,14 @@ class PlayfairCipher {
 
         for (int i = 0; i < encodedMessage.length(); i += 2) {
             // If the length of the cipher text is odd it will append an 'X' to the end
-            if (i == encodedMessage.length() - 1)
-                encodedMessage.append(encodedMessage.length() % 2 == 1 ? 'X' : "");
+            if (i == encodedMessage.length() - 1){
+                if(encodedMessage.length() % 2 == 1){
+                    encodedMessage.append('X'); 
+                } 
+                else{
+                    encodedMessage.append("");
+                }
+            }
 
             // Inserts an 'X' wherever there is a set of duplicate letter like 'SS'
             else if (encodedMessage.charAt(i) == encodedMessage.charAt(i + 1))
@@ -124,12 +135,12 @@ class PlayfairCipher {
             int bAlphabetIndex = ((int) b) - 65;
 
             // First character in the pair
-            int rowOne = xyPoints[aAlphabetIndex].y;
-            int colOne = xyPoints[aAlphabetIndex].x;
+            int rowOne = alphabetPoints[aAlphabetIndex].y;
+            int colOne = alphabetPoints[aAlphabetIndex].x;
 
             // Second character in the pair
-            int rowTwo = xyPoints[bAlphabetIndex].y;
-            int colTwo = xyPoints[bAlphabetIndex].x;
+            int rowTwo = alphabetPoints[bAlphabetIndex].y;
+            int colTwo = alphabetPoints[bAlphabetIndex].x;
 
             // Shifts the columns to the right if the rows are equivalent
             if (rowOne == rowTwo) {
@@ -154,12 +165,12 @@ class PlayfairCipher {
           Inserts the punctuation back into the string at the index
 	  it belongs in.
         */
-	int i = 0;
+	    int i = 0;
         for(char c: outText){
             if(c != 0){
                 temp.insert(i, c);
             }
-	    i++;
+	        i++;
         }
         return temp.toString();
     }
