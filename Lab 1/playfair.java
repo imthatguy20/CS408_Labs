@@ -123,8 +123,8 @@ class PlayfairCipher {
     }
 
     /* Codec will be used for both the encryption and decryption
-    the direction denotes the way that the shift will move. */
-    private static String playfairCodec(StringBuilder temp, int direction) {
+    the shiftSpotAmount denotes the way that the shiftSpotAmount will move. */
+    private static String playfairCodec(StringBuilder temp, int shiftSpotAmount) {
         int len = temp.length();
         for (int i = 0; i < len; i += 2) {
             char a = temp.charAt(i);
@@ -142,15 +142,21 @@ class PlayfairCipher {
             int rowTwo = alphabetPoints[bAlphabetIndex].y;
             int colTwo = alphabetPoints[bAlphabetIndex].x;
 
-            // Shifts the columns to the right if the rows are equivalent
+            // shiftSpotAmounts the columns to the right if the rows are equivalent
             if (rowOne == rowTwo) {
-                colOne = (colOne + direction) % 5;
-                colTwo = (colTwo + direction) % 5;
+                colOne += shiftSpotAmount;
+                colOne = colOne % 5;
 
-            // Shifts the rows down if the columns are equivalent
+                colTwo += shiftSpotAmount;
+                colTwo = colTwo % 5;
+
+            // shiftSpotAmountAmounts the rows down if the columns are equivalent
             } else if (colOne == colTwo) {
-                rowOne = (rowOne + direction) % 5;
-                rowTwo = (rowTwo + direction) % 5;
+                rowOne += shiftSpotAmount;
+                rowOne = rowOne % 5;
+
+                rowTwo += shiftSpotAmount;
+                rowTwo = rowTwo % 5;
 
             } else {
                 int tmp = colOne;
