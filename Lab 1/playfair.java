@@ -114,8 +114,7 @@ class PlayfairCipher {
                 encodedMessage.insert(i + 1, 'X');
         }
         // return playfairCodec(encodedMessage, 1);
-        int len = encodedMessage.length();
-        for (int i = 0; i < len; i += 2) {
+        for (int i = 0; i < encodedMessage.length(); i += 2) {
             char a = encodedMessage.charAt(i);
             char b = encodedMessage.charAt(i + 1);
 
@@ -174,8 +173,7 @@ class PlayfairCipher {
     // decodeCipherTexts the string using the codec method defined later
     private static String decodeCipherText(String cipherText) {
         StringBuilder decodedMessage = new StringBuilder(cipherText);
-        int len = decodedMessage.length();
-        for (int i = 0; i < len; i += 2) {
+        for (int i = 0; i < decodedMessage.length(); i += 2) {
             char a = decodedMessage.charAt(i);
             char b = decodedMessage.charAt(i + 1);
 
@@ -214,8 +212,11 @@ class PlayfairCipher {
                 colTwo = tmp;
             }
             // Gets the character from the table and sets it to the appropriate position
-            decodedMessage.setCharAt(i, charMatrix[rowOne][colOne]); // First
-            decodedMessage.setCharAt(i + 1, charMatrix[rowTwo][colTwo]); // Second
+            char firstLetter = charMatrix[rowOne][colOne];
+            char secodLetter = charMatrix[rowTwo][colTwo];
+
+            decodedMessage.setCharAt(i, firstLetter); // First
+            decodedMessage.setCharAt(i + 1, secodLetter); // Second
         }
         /*
           Inserts the punctuation back into the string at the index
