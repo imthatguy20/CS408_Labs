@@ -6,7 +6,6 @@ class PlayfairCipher {
     private static Point[] alphabetPoints;
     private static String punctuation = ",./'|;:<>()@#$%^&*!?~-+_=";
     private static char[] outText;
-    private static boolean qRemoved = false;
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -96,8 +95,8 @@ class PlayfairCipher {
     /* Responsible for encoding the string and making sure that the encodePlainTextd text
     will be properly formatted when when passed to the codec to finish encoding
     the plaintext message */
-    private static String encodePlainText(String s) {
-        StringBuilder encodedMessage = new StringBuilder(s); // Consists of the pre-formatted text made earlier
+    private static String encodePlainText(String plainText) {
+        StringBuilder encodedMessage = new StringBuilder(plainText); // Consists of the pre-formatted text made earlier
 
         for (int i = 0; i < encodedMessage.length(); i += 2) {
             // If the length of the cipher text is odd it will append an 'X' to the end
@@ -158,6 +157,7 @@ class PlayfairCipher {
                 rowTwo += shiftSpotAmount;
                 rowTwo = rowTwo % 5;
 
+            // If neither condition is met then a swap is done
             } else {
                 int tmp = colOne;
                 colOne = colTwo;
