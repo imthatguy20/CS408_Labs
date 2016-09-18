@@ -113,21 +113,11 @@ class PlayfairCipher {
             else if (encodedMessage.charAt(i) == encodedMessage.charAt(i + 1))
                 encodedMessage.insert(i + 1, 'X');
         }
-        return playfairCodec(encodedMessage, 1);
-    }
-
-    // decodeCipherTexts the string using the codec method defined later
-    private static String decodeCipherText(String cipherText) {
-        return playfairCodec(new StringBuilder(cipherText), 4);
-    }
-
-    /* Codec will be used for both the encryption and decryption
-    the shiftSpotAmount denotes the way that the shiftSpotAmount will move. */
-    private static String playfairCodec(StringBuilder temp, int shiftSpotAmount) {
-        int len = temp.length();
+        // return playfairCodec(encodedMessage, 1);
+        int len = encodedMessage.length();
         for (int i = 0; i < len; i += 2) {
-            char a = temp.charAt(i);
-            char b = temp.charAt(i + 1);
+            char a = encodedMessage.charAt(i);
+            char b = encodedMessage.charAt(i + 1);
 
             // Used to get the numeric index of the character in the alphabet
             int aAlphabetIndex = ((int) a) - 65;
@@ -143,18 +133,18 @@ class PlayfairCipher {
 
             // shiftSpotAmounts the columns to the right if the rows are equivalent
             if (rowOne == rowTwo) {
-                colOne += shiftSpotAmount;
+                colOne += 1;
                 colOne = colOne % 5;
 
-                colTwo += shiftSpotAmount;
+                colTwo += 1;
                 colTwo = colTwo % 5;
 
             // shiftSpotAmountAmounts the rows down if the columns are equivalent
             } else if (colOne == colTwo) {
-                rowOne += shiftSpotAmount;
+                rowOne += 1;
                 rowOne = rowOne % 5;
 
-                rowTwo += shiftSpotAmount;
+                rowTwo += 1;
                 rowTwo = rowTwo % 5;
 
             // If neither condition is met then a swap is done
@@ -164,8 +154,8 @@ class PlayfairCipher {
                 colTwo = tmp;
             }
             // Gets the character from the table and sets it to the appropriate position
-            temp.setCharAt(i, charMatrix[rowOne][colOne]); // First
-            temp.setCharAt(i + 1, charMatrix[rowTwo][colTwo]); // Second
+            encodedMessage.setCharAt(i, charMatrix[rowOne][colOne]); // First
+            encodedMessage.setCharAt(i + 1, charMatrix[rowTwo][colTwo]); // Second
         }
         /*
           Inserts the punctuation back into the string at the index
@@ -174,10 +164,70 @@ class PlayfairCipher {
 	    int i = 0;
         for(char c: outText){
             if(c != 0){
-                temp.insert(i, c);
+                encodedMessage.insert(i, c);
             }
 	        i++;
         }
-        return temp.toString();
+        return encodedMessage.toString();
+    }
+
+    // decodeCipherTexts the string using the codec method defined later
+    private static String decodeCipherText(String cipherText) {
+        StringBuilder decodedMessage = new StringBuilder(cipherText);
+        int len = decodedMessage.length();
+        for (int i = 0; i < len; i += 2) {
+            char a = decodedMessage.charAt(i);
+            char b = decodedMessage.charAt(i + 1);
+
+            // Used to get the numeric index of the character in the alphabet
+            int aAlphabetIndex = ((int) a) - 65;
+            int bAlphabetIndex = ((int) b) - 65;
+
+            // First character in the pair
+            int rowOne = alphabetPoints[aAlphabetIndex].y;
+            int colOne = alphabetPoints[aAlphabetIndex].x;
+
+            // Second character in the pair
+            int rowTwo = alphabetPoints[bAlphabetIndex].y;
+            int colTwo = alphabetPoints[bAlphabetIndex].x;
+
+            // shiftSpotAmounts the columns to the right if the rows are equivalent
+            if (rowOne == rowTwo) {
+                colOne += 4;
+                colOne = colOne % 5;
+
+                colTwo += 4;
+                colTwo = colTwo % 5;
+
+            // shiftSpotAmountAmounts the rows down if the columns are equivalent
+            } else if (colOne == colTwo) {
+                rowOne += 4;
+                rowOne = rowOne % 5;
+
+                rowTwo += 4;
+                rowTwo = rowTwo % 5;
+
+            // If neither condition is met then a swap is done
+            } else {
+                int tmp = colOne;
+                colOne = colTwo;
+                colTwo = tmp;
+            }
+            // Gets the character from the table and sets it to the appropriate position
+            decodedMessage.setCharAt(i, charMatrix[rowOne][colOne]); // First
+            decodedMessage.setCharAt(i + 1, charMatrix[rowTwo][colTwo]); // Second
+        }
+        /*
+          Inserts the punctuation back into the string at the index
+	  it belongs in.
+        */
+	    int i = 0;
+        for(char c: outText){
+            if(c != 0){
+                decodedMessage.insert(i, c);
+            }
+	        i++;
+        }
+        return decodedMessage.toString();
     }
 }
