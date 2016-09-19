@@ -125,38 +125,32 @@ class PlayfairCipher {
             int bAlphabetIndex = ((int) b) - 65;
 
             // First character in the pair
-            int rowOne = alphabetPoints[aAlphabetIndex][2];
-            int colOne = alphabetPoints[aAlphabetIndex][1];
-
-            // Second character in the pair
-            int rowTwo = alphabetPoints[bAlphabetIndex][2];
-            int colTwo = alphabetPoints[bAlphabetIndex][1];
+            // int rowOne = alphabetPoints[aAlphabetIndex][2];
+            // int colOne = alphabetPoints[aAlphabetIndex][1];
+            //
+            // // Second character in the pair
+            // int rowTwo = alphabetPoints[bAlphabetIndex][2];
+            // int colTwo = alphabetPoints[bAlphabetIndex][1];
 
             // shiftSpotAmounts the columns to the right if the rows are equivalent
-            if (rowOne == rowTwo) {
-                colOne += 1;
-                colOne = colOne % 5;
-
-                colTwo += 1;
-                colTwo = colTwo % 5;
+            if (alphabetPoints[aAlphabetIndex][2] == alphabetPoints[bAlphabetIndex][2]) {
+                encodedStringArr[aAlphabetIndex][1] = alphabetPoints[(aAlphabetIndex+1)%5][1];
+                encodedStringArr[bAlphabetIndex][1] = alphabetPoints[(bAlphabetIndex+1)%5][1];
 
             // shiftSpotAmountAmounts the rows down if the columns are equivalent
-            } else if (colOne == colTwo) {
-                rowOne += 1;
-                rowOne = rowOne % 5;
-
-                rowTwo += 1;
-                rowTwo = rowTwo % 5;
+            } else if (alphabetPoints[aAlphabetIndex][1] == alphabetPoints[bAlphabetIndex][1]) {
+                encodedStringArr[aAlphabetIndex][2] = alphabetPoints[(aAlphabetIndex+1)%5][2];
+                encodedStringArr[bAlphabetIndex][2] = alphabetPoints[(bAlphabetIndex+1)%5][2];
 
             // If neither condition is met then a swap is done
             } else {
-                int tmp = colOne;
-                colOne = colTwo;
-                colTwo = tmp;
+                int tmp = encodedStringArr[aAlphabetIndex][1];
+                encodedStringArr[aAlphabetIndex][1] = encodedStringArr[bAlphabetIndex][1];
+                encodedStringArr[bAlphabetIndex][1] = tmp;
             }
             // Gets the character from the table and sets it to the appropriate position
-            encodedMessage.setCharAt(i, charMatrix[rowOne][colOne]); // First
-            encodedMessage.setCharAt(i + 1, charMatrix[rowTwo][colTwo]); // Second
+            encodedMessage.setCharAt(i, charMatrix[alphabetPoints[aAlphabetIndex][2]][alphabetPoints[aAlphabetIndex][1]]); // First
+            encodedMessage.setCharAt(i + 1, charMatrix[alphabetPoints[bAlphabetIndex][2]][alphabetPoints[bAlphabetIndex][1]]); // Second
         }
         /*
           Inserts the punctuation back into the string at the index
