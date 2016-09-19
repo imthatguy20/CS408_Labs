@@ -82,7 +82,6 @@ class PlayfairCipher {
                     index of the alphabet corresponding to the character. */
                 alphabetPoints[alphabetIndex][0] = matrixPos % 5;
                 alphabetPoints[alphabetIndex][1] = matrixPos / 5;
-                //System.out.println(alphabetPoints[alphabetIndex][1]);
                 matrixPos++;
             }
         }
@@ -143,11 +142,9 @@ class PlayfairCipher {
             encodedMessage.setCharAt(i, charMatrix[rowOne][colOne]); // First
             encodedMessage.setCharAt(i + 1, charMatrix[rowTwo][colTwo]); // Second
         }
-        /*
-          Inserts the punctuation back into the string at the index
-	      it belongs in.
-        */
-	    int i = 0;
+        /* Inserts the punctuation back into the string at the index
+	   it belongs in. */
+	int i = 0;
         for(char c: outText){
           if(c != 0){
               encodedMessage.insert(i, c);
@@ -159,7 +156,6 @@ class PlayfairCipher {
 
     //decodeCipherTexts the string using the codec method defined later
     public static String decodeCipherText(String cipherText) {
-
         StringBuilder decodedMessage = new StringBuilder(cipherText);
         for (int i = 0; i < decodedMessage.length(); i += 2) {
             // If the length of the cipher text is odd it will append an 'X' to the end
@@ -175,7 +171,6 @@ class PlayfairCipher {
             else if (decodedMessage.charAt(i) == decodedMessage.charAt(i + 1))
                 decodedMessage.insert(i + 1, 'X');
         }
-        // return playfairCodec(encodedMessage, 1);
         for (int i = 0; i < decodedMessage.length(); i += 2) {
             char a = decodedMessage.charAt(i);
             char b = decodedMessage.charAt(i + 1);
@@ -212,7 +207,7 @@ class PlayfairCipher {
             decodedMessage.setCharAt(i, charMatrix[rowOne][colOne]); // First
             decodedMessage.setCharAt(i + 1, charMatrix[rowTwo][colTwo]); // Second
         }
-	      int i = 0;
+	  int i = 0;
           for(char c: outText){
           if(c != 0){
               decodedMessage.insert(i, c);
