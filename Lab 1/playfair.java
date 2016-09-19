@@ -61,7 +61,6 @@ class PlayfairCipher {
             throw new IllegalArgumentException("Error:  Not a valid argument");
         }
     }
-
     //  Prepares the string to be manipulated by either the encoding or decoding methods
     public static String formatTextForMatrix(String text) {
         text = text.toUpperCase().replaceAll("[^A-Z]", "");
@@ -71,16 +70,12 @@ class PlayfairCipher {
     public static void constructCharMatrix(String key) {
         charMatrix = new char[5][5]; // 5 x 5 Matrix creation for the table
         alphabetPoints = new int [26][2]; // Represnt the 26 different letters of the English Alphabet and corresponding points
-
         // Prepares the text to be used for the encryption
         String preMatrixString = formatTextForMatrix(key + alphabet);
-
         int matrixPos = 0;
-
         for (int i = 0; i < preMatrixString.length(); i++) {
             char c = preMatrixString.charAt(i);
             int alphabetIndex = alphabet.indexOf(c); // Gets the index of the letter in the alphabet
-
             if (alphabetPoints[alphabetIndex][1] == 0  && alphabetPoints[alphabetIndex][0] == 0) { // Checks to see if the letter has been used already or not
                 charMatrix[matrixPos / 5][matrixPos % 5] = c; // Sets the position in the 2D array to be used for the matrix
                 /*  Allows for the coordinates for the specific point in the key matrix to be saved at the particular
@@ -176,17 +171,14 @@ class PlayfairCipher {
                     decodedMessage.append("");
                 }
             }
-
             // Inserts an 'X' wherever there is a set of duplicate letter like 'SS'
             else if (decodedMessage.charAt(i) == decodedMessage.charAt(i + 1))
                 decodedMessage.insert(i + 1, 'X');
         }
-
         // return playfairCodec(encodedMessage, 1);
         for (int i = 0; i < decodedMessage.length(); i += 2) {
             char a = decodedMessage.charAt(i);
             char b = decodedMessage.charAt(i + 1);
-
             // Gets the 'x' and 'y' or row and column for the pair of letters
             for (int j = 0; j < alphabetPoints.length; j++){
               if (alphabet.indexOf(a) == j){
