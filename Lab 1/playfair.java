@@ -1,11 +1,12 @@
-import java.awt.Point;
 import java.util.*;
 
 class PlayfairCipher {
     private static char[][] charMatrix;
     private static int [][] alphabetPoints;
     private static String punctuation = ",./'|;:<>()@#$%^&*!?~-+_=";
+    private static String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static char[] outText;
+    private static int colOne, colTwo, rowOne, rowTwo;
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -63,40 +64,49 @@ class PlayfairCipher {
         }
     }
 
-    private static String formatTextForMatrix(String s) {
+    public static String formatTextForMatrix(String s) {
         s = s.toUpperCase().replaceAll("[^A-Z]", "");
         return s.replace("J", "I").replace("Q", "");
     }
 
-    private static void createTable(String key) {
+    public static void createTable(String key) {
         charMatrix = new char[5][5]; // 5 x 5 Matrix creation for the table
         alphabetPoints = new int [26][2]; // Represnt the 26 different letters of the English Alphabet
 
         // Prepares the text to be used for the encryption
-        String preMatrixString = formatTextForMatrix(key + "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+        String preMatrixString = formatTextForMatrix(key + alphabet);
 
         int matrixPos = 0;
 
         for (int i = 0; i < preMatrixString.length(); i++) {
             char c = preMatrixString.charAt(i);
-            int alphabetIndex = ((int) c) - 65; // Gets the index of the letter in the alphabet
-            if (alphabetPoints[alphabetIndex][] == null) { // Checks to see if the letter has been used already or not
+            int alphabetIndex = alphabet.indexOf(c); // Gets the index of the letter in the alphabet
+
+            if (alphabetPoints[alphabetIndex][1] == 0  && alphabetPoints[alphabetIndex][0] == 0) { // Checks to see if the letter has been used already or not
                 charMatrix[matrixPos / 5][matrixPos % 5] = c; // Sets the position in the 2D array to be used for the matrix
                 /*
                     Allows for the coordinates for the specific point in the key matrix to be saved at the particular
                     index of the alphabet corresponding to the character.
                 */
-                alphabetPoints[alphabetIndex][1] = matrixPos % 5;
-                alphabetPoints[alphabetIndex][2] = matrixPos / 5;
+                alphabetPoints[alphabetIndex][0] = matrixPos % 5;
+                alphabetPoints[alphabetIndex][1] = matrixPos / 5;
+                //System.out.println(alphabetPoints[alphabetIndex][1]);
                 matrixPos++;
             }
         }
+        // for(char[] arr : charMatrix){
+        //   System.out.println(Arrays.toString(arr));
+        // }
+        // for(int[] arr : alphabetPoints){
+        //   System.out.println(Arrays.toString(arr));
+        // }
     }
+
 
     /* Responsible for encoding the string and making sure that the encodePlainTextd text
     will be properly formatted when when passed to the codec to finish encoding
     the plaintext message */
-    private static String encodePlainText(String plainText) {
+    public static String encodePlainText(String plainText) {
         StringBuilder encodedMessage = new StringBuilder(plainText); // Consists of the pre-formatted text made earlier
 
         for (int i = 0; i < encodedMessage.length(); i += 2) {
@@ -115,42 +125,41 @@ class PlayfairCipher {
                 encodedMessage.insert(i + 1, 'X');
         }
         // return playfairCodec(encodedMessage, 1);
-        int [][] encodedStringArr = new int [26][2];
         for (int i = 0; i < encodedMessage.length(); i += 2) {
             char a = encodedMessage.charAt(i);
             char b = encodedMessage.charAt(i + 1);
 
             // Used to get the numeric index of the character in the alphabet
-            int aAlphabetIndex = ((int) a) - 65;
-            int bAlphabetIndex = ((int) b) - 65;
-
-            // First character in the pair
-            // int rowOne = alphabetPoints[aAlphabetIndex][2];
-            // int colOne = alphabetPoints[aAlphabetIndex][1];
-            //
-            // // Second character in the pair
-            // int rowTwo = alphabetPoints[bAlphabetIndex][2];
-            // int colTwo = alphabetPoints[bAlphabetIndex][1];
+          //  int colOne = 0, colTwo = 0, rowOne = 0, rowTwo = 0;
+            for (int j = 0; j < alphabetPoints.length; j++){
+              if (alphabet.indexOf(a) == j){
+                colOne = alphabetPoints[j][0];
+                rowOne = alphabetPoints[j][1];
+              }
+              if (alphabet.indexOf(b) == j){
+                colTwo = alphabetPoints[j][0];
+                rowTwo = alphabetPoints[j][1];
+              }
+            }
 
             // shiftSpotAmounts the columns to the right if the rows are equivalent
-            if (alphabetPoints[aAlphabetIndex][2] == alphabetPoints[bAlphabetIndex][2]) {
-                encodedStringArr[aAlphabetIndex][1] = alphabetPoints[(aAlphabetIndex+1)%5][1];
-                encodedStringArr[bAlphabetIndex][1] = alphabetPoints[(bAlphabetIndex+1)%5][1];
+            if (rowOne == rowTwo) {
+                colOne = (colOne + 1) % 5;
+                colTwo = (colTwo + 1) % 5;
 
-            // shiftSpotAmountAmounts the rows down if the columns are equivalent
-            } else if (alphabetPoints[aAlphabetIndex][1] == alphabetPoints[bAlphabetIndex][1]) {
-                encodedStringArr[aAlphabetIndex][2] = alphabetPoints[(aAlphabetIndex+1)%5][2];
-                encodedStringArr[bAlphabetIndex][2] = alphabetPoints[(bAlphabetIndex+1)%5][2];
-
+            // Shifts the rows down if the columns are equivalent
+            } else if (colOne == colTwo) {
+                rowOne = (rowOne + 1) % 5;
+                rowTwo = (rowTwo + 1) % 5;
             // If neither condition is met then a swap is done
             } else {
-                int tmp = encodedStringArr[aAlphabetIndex][1];
-                encodedStringArr[aAlphabetIndex][1] = encodedStringArr[bAlphabetIndex][1];
-                encodedStringArr[bAlphabetIndex][1] = tmp;
+              int temp = colOne;
+              colOne = colTwo;
+              colTwo = temp;
             }
             // Gets the character from the table and sets it to the appropriate position
-            encodedMessage.setCharAt(i, charMatrix[alphabetPoints[aAlphabetIndex][2]][alphabetPoints[aAlphabetIndex][1]]); // First
-            encodedMessage.setCharAt(i + 1, charMatrix[alphabetPoints[bAlphabetIndex][2]][alphabetPoints[bAlphabetIndex][1]]); // Second
+            encodedMessage.setCharAt(i, charMatrix[rowOne][colOne]); // First
+            encodedMessage.setCharAt(i + 1, charMatrix[rowTwo][colTwo]); // Second
         }
         /*
           Inserts the punctuation back into the string at the index
@@ -162,69 +171,78 @@ class PlayfairCipher {
                 encodedMessage.insert(i, c);
             }
 	        i++;
-        }
+         }
         return encodedMessage.toString();
     }
 
-    // decodeCipherTexts the string using the codec method defined later
-    private static String decodeCipherText(String cipherText) {
+    //decodeCipherTexts the string using the codec method defined later
+    public static String decodeCipherText(String cipherText) {
+
         StringBuilder decodedMessage = new StringBuilder(cipherText);
+        for (int i = 0; i < decodedMessage.length(); i += 2) {
+            // If the length of the cipher text is odd it will append an 'X' to the end
+            if (i == decodedMessage.length() - 1){
+                if(decodedMessage.length() % 2 == 1){
+                    decodedMessage.append('X');
+                }
+                else{
+                    decodedMessage.append("");
+                }
+            }
+
+            // Inserts an 'X' wherever there is a set of duplicate letter like 'SS'
+            else if (decodedMessage.charAt(i) == decodedMessage.charAt(i + 1))
+                decodedMessage.insert(i + 1, 'X');
+        }
+
+        // return playfairCodec(encodedMessage, 1);
         for (int i = 0; i < decodedMessage.length(); i += 2) {
             char a = decodedMessage.charAt(i);
             char b = decodedMessage.charAt(i + 1);
 
+            System.out.println(alphabet.indexOf(b));
+
             // Used to get the numeric index of the character in the alphabet
-            int aAlphabetIndex = ((int) a) - 65;
-            int bAlphabetIndex = ((int) b) - 65;
-
-            // First character in the pair
-            int rowOne = alphabetPoints[aAlphabetIndex].y;
-            int colOne = alphabetPoints[aAlphabetIndex].x;
-
-            // Second character in the pair
-            int rowTwo = alphabetPoints[bAlphabetIndex].y;
-            int colTwo = alphabetPoints[bAlphabetIndex].x;
+            for (int j = 0; j < alphabetPoints.length; j++){
+              if (alphabet.indexOf(a) == j){
+                colOne = alphabetPoints[j][0];
+                rowOne = alphabetPoints[j][1];
+              }
+              if (alphabet.indexOf(b) == j){
+                colTwo = alphabetPoints[j][0];
+                rowTwo = alphabetPoints[j][1];
+              }
+            }
 
             // shiftSpotAmounts the columns to the right if the rows are equivalent
             if (rowOne == rowTwo) {
-                colOne += 4;
-                colOne = colOne % 5;
+                colOne = (colOne + 4) % 5;
+                colTwo = (colTwo + 4) % 5;
 
-                colTwo += 4;
-                colTwo = colTwo % 5;
-
-            // shiftSpotAmountAmounts the rows down if the columns are equivalent
+            // Shifts the rows down if the columns are equivalent
             } else if (colOne == colTwo) {
-                rowOne += 4;
-                rowOne = rowOne % 5;
-
-                rowTwo += 4;
-                rowTwo = rowTwo % 5;
-
+                rowOne = (rowOne + 4) % 5;
+                rowTwo = (rowTwo + 4) % 5;
             // If neither condition is met then a swap is done
             } else {
-                int tmp = colOne;
-                colOne = colTwo;
-                colTwo = tmp;
+              int temp = colOne;
+              colOne = colTwo;
+              colTwo = temp;
             }
             // Gets the character from the table and sets it to the appropriate position
-            char firstLetter = charMatrix[rowOne][colOne];
-            char secodLetter = charMatrix[rowTwo][colTwo];
-
-            decodedMessage.setCharAt(i, firstLetter); // First
-            decodedMessage.setCharAt(i + 1, secodLetter); // Second
+            decodedMessage.setCharAt(i, charMatrix[rowOne][colOne]); // First
+            decodedMessage.setCharAt(i + 1, charMatrix[rowTwo][colTwo]); // Second
         }
-        /*
-          Inserts the punctuation back into the string at the index
-	  it belongs in.
-        */
-	    int i = 0;
+	      int i = 0;
         for(char c: outText){
             if(c != 0){
                 decodedMessage.insert(i, c);
             }
 	        i++;
         }
+        decodedMessage.replaceAll("X", "");
         return decodedMessage.toString();
     }
+
+
 }
