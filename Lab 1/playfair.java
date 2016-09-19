@@ -3,7 +3,7 @@ import java.util.*;
 
 class PlayfairCipher {
     private static char[][] charMatrix;
-    private static Point[] alphabetPoints;
+    private static int [][] alphabetPoints;
     private static String punctuation = ",./'|;:<>()@#$%^&*!?~-+_=";
     private static char[] outText;
 
@@ -70,23 +70,24 @@ class PlayfairCipher {
 
     private static void createTable(String key) {
         charMatrix = new char[5][5]; // 5 x 5 Matrix creation for the table
-        alphabetPoints = new Point[26]; // Represnt the 26 different letters of the English Alphabet
+        alphabetPoints = new int [26][2]; // Represnt the 26 different letters of the English Alphabet
 
         // Prepares the text to be used for the encryption
         String preMatrixString = formatTextForMatrix(key + "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
-        int matrixPos = 0; 
-        
+        int matrixPos = 0;
+
         for (int i = 0; i < preMatrixString.length(); i++) {
             char c = preMatrixString.charAt(i);
             int alphabetIndex = ((int) c) - 65; // Gets the index of the letter in the alphabet
-            if (alphabetPoints[alphabetIndex] == null) { // Checks to see if the letter has been used already or not
+            if (alphabetPoints[alphabetIndex][] == null) { // Checks to see if the letter has been used already or not
                 charMatrix[matrixPos / 5][matrixPos % 5] = c; // Sets the position in the 2D array to be used for the matrix
                 /*
-                    Allows for the coordinates for the specific point in the key matrix to be saved at the particular 
-                    index of the alphabet corresponding to the character.  
+                    Allows for the coordinates for the specific point in the key matrix to be saved at the particular
+                    index of the alphabet corresponding to the character.
                 */
-                alphabetPoints[alphabetIndex] = new Point(matrixPos % 5, matrixPos / 5); 
+                alphabetPoints[alphabetIndex][1] = matrixPos % 5;
+                alphabetPoints[alphabetIndex][2] = matrixPos / 5;
                 matrixPos++;
             }
         }
@@ -102,8 +103,8 @@ class PlayfairCipher {
             // If the length of the cipher text is odd it will append an 'X' to the end
             if (i == encodedMessage.length() - 1){
                 if(encodedMessage.length() % 2 == 1){
-                    encodedMessage.append('X'); 
-                } 
+                    encodedMessage.append('X');
+                }
                 else{
                     encodedMessage.append("");
                 }
@@ -114,6 +115,7 @@ class PlayfairCipher {
                 encodedMessage.insert(i + 1, 'X');
         }
         // return playfairCodec(encodedMessage, 1);
+        int [][] encodedStringArr = new int [26][2];
         for (int i = 0; i < encodedMessage.length(); i += 2) {
             char a = encodedMessage.charAt(i);
             char b = encodedMessage.charAt(i + 1);
@@ -123,12 +125,12 @@ class PlayfairCipher {
             int bAlphabetIndex = ((int) b) - 65;
 
             // First character in the pair
-            int rowOne = alphabetPoints[aAlphabetIndex].y;
-            int colOne = alphabetPoints[aAlphabetIndex].x;
+            int rowOne = alphabetPoints[aAlphabetIndex][2];
+            int colOne = alphabetPoints[aAlphabetIndex][1];
 
             // Second character in the pair
-            int rowTwo = alphabetPoints[bAlphabetIndex].y;
-            int colTwo = alphabetPoints[bAlphabetIndex].x;
+            int rowTwo = alphabetPoints[bAlphabetIndex][2];
+            int colTwo = alphabetPoints[bAlphabetIndex][1];
 
             // shiftSpotAmounts the columns to the right if the rows are equivalent
             if (rowOne == rowTwo) {
