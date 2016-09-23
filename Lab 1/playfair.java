@@ -23,7 +23,7 @@ class PlayfairCipher {
               txtEnc = sc.nextLine().trim();
             } while (txtEnc.length() < 1);
             txtEnc = txtEnc.replaceAll("\\s", ""); // Trims the whitespace from the text
-            outText = new char[txtEnc.length()+1]; // Sets the output text to be the size of the original text
+            outText = new char[txtEnc.length()]; // Sets the output text to be the size of the original text
             /* Checks to see if the text contains any punctuation
                and if it does, moves it to the output text for both the
                encodePlainTextd text and decodeCipherTextd text. */
@@ -32,9 +32,9 @@ class PlayfairCipher {
                 outText[txtEnc.indexOf(c)] = c;
               }
             }
-            createTable(keyEnc); // Creates the table to be used for encryption
+            createLetterMatrix(keyEnc); // Creates the table to be used for encryption
             String enc = encodePlainText(createPreMatrixString(txtEnc)); // encodePlainTexts the message
-            System.out.printf("%nencoded message: %n%s%n", enc);
+            System.out.printf("%nEncoded message: %n%s%n", enc);
             break;
           case "-d":
             String keyDec, txtDec;
@@ -53,19 +53,19 @@ class PlayfairCipher {
                 outText[txtDec.indexOf(c)] = c;
               }
             }
-            createTable(keyDec);
-            txtDec = txtDec.replaceAll("\\p{P}", ""); // Removes all non-alphanumeric characters
-            System.out.printf("%ndecodeCipherTextd message: %n%s%n", decodeCipherText(txtDec));
+            createLetterMatrix(keyDec);
+            txtDec = txtDec.replaceAll("[^A-Z]", ""); // Removes all non-alphanumeric characters
+            System.out.printf("%nDecoded message: %n%s%n", decodeCipherText(txtDec));
             break;
           default:
             throw new IllegalArgumentException("Error:  Not a valid argument");
         }
     }
-    private static String createPreMatrixString(String s) {
-        s = s.toUpperCase().replaceAll("[^A-Z]", "");
-        return s.replace("J", "I");
+    private static String createPreMatrixString(String comboText) {
+        comboText = comboText.toUpperCase().replaceAll("[^A-Z]", "");
+        return comboText.replace("J", "I");
     }
-    private static void createTable(String key) {
+    private static void createLetterMatrix(String key) {
         charMatrix = new char[5][5]; // 5 x 5 Matrix creation for the table
         alphabetCoordinates = new Point[26]; // Represnt the 26 different letters of the English Alphabet       
         key += alphabet; // Prepares the text to be used for the encryption
@@ -128,6 +128,8 @@ class PlayfairCipher {
                 secondCharX = tmp;
             }
             // Gets the character from the table and sets it to the appropriate position
+            char firstLetter = charMatrix[firstCharY][firstCharX];
+            char secondLetter = charMatrix[secondCharY][secondCharX];
             encodedMessage.setCharAt(i, charMatrix[firstCharY][firstCharX]); // First
             encodedMessage.setCharAt(i + 1, charMatrix[secondCharY][secondCharX]); // Second
         }
@@ -144,6 +146,7 @@ class PlayfairCipher {
     // Decodes the string using the codec method defined later
     private static String decodeCipherText(String cipherText) {
         StringBuilder decodedMessage = new StringBuilder(cipherText);
+        System.out.println(decodedMessage.toString());
         for (int i = 0; i < decodedMessage.length(); i += 2) {
             // First character in the pair by checking it against the alphabet string and encoded message location
             int firstCharY = alphabetCoordinates[alphabet.indexOf(decodedMessage.charAt(i))].y;
@@ -171,10 +174,13 @@ class PlayfairCipher {
             }
             // Gets the character from the table and sets it to the appropriate position
             char firstLetter = charMatrix[firstCharY][firstCharX];
-            char secodLetter = charMatrix[secondCharY][secondCharX];
+            char secondLetter = charMatrix[secondCharY][secondCharX];
             decodedMessage.setCharAt(i, firstLetter); // First
-            decodedMessage.setCharAt(i + 1, secodLetter); // Second
+            decodedMessage.setCharAt(i + 1, secondLetter); // Second
         }
+        String decodedPT = decodedMessage.toString();
+        decodedPT = decodedPT.replaceAll("X","");
+        decodedMessage = new StringBuilder(decodedPT);
         // Inserts the punctuation back into the string at the index it belongs in.
 	    int i = 0;
         for(char c: outText){
