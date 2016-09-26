@@ -11,7 +11,8 @@ class PlayfairCipher {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         // Switch statement that will allow the user to either encodePlainText or decodeCipherText
-        switch (args[0]){
+        try{
+            switch (args[0]){
           case "-e":
             String keyEnc, txtEnc;
             do{
@@ -57,8 +58,10 @@ class PlayfairCipher {
             txtDec = txtDec.replaceAll("[^A-Z]", ""); // Removes all non-alphanumeric characters
             System.out.printf("%nDecoded message: %n%s%n", decodeCipherText(txtDec));
             break;
-          default:
-            throw new IllegalArgumentException("Error:  Not a valid argument");
+        }
+        }
+        catch(ArrayIndexOutOfBoundsException e){
+            System.out.println("USAGE: java PlayfairCipher [-e] [-d]\n -e Encrypt\n -d Decrypt");
         }
     }
     private static String createPreMatrixString(String comboText) {
