@@ -127,14 +127,12 @@ public class hill {
         d = d % 26;
         if (d == 0)
         {
-            System.out
-                    .println("Invalid key!!! Key is not invertible because determinant=0...");
+            System.out.println("Invalid key!!! Key is not invertible because determinant=0...");
             return false;
         }
         else if (d % 2 == 0 || d % 13 == 0)
         {
-            System.out
-                    .println("Invalid key!!! Key is not invertible because determinant has common factor with 26...");
+            System.out.println("Invalid key!!! Key is not invertible because determinant has common factor with 26...");
             return false;
         }
         else
