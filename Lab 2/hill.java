@@ -23,7 +23,7 @@ public class hill {
                     System.out.println("Invalid key length!!! Does not form a square matrix...");
                 else {
                     int s = (int) sq;
-                    if (check(key, s)) {
+                    if (invertableCheck(key, s)) {
                         System.out.println("Result:");
                         divide(line, s);
                         cofact(keymatrix, s);
@@ -40,7 +40,7 @@ public class hill {
                     System.out.println("Invalid key length!!! Does not form a square matrix...");
                 else {
                     int s = (int) sq;
-                    if (check(key, s)) {
+                    if (invertableCheck(key, s)) {
                         System.out.println("Result:");
                         divide(line, s);
                         cofact(keymatrix, s);
@@ -77,9 +77,9 @@ public class hill {
  
     public static void perform(String line)
     {
-        linetomatrix(line);
-        linemultiplykey(line.length());
-        result(line.length());
+        lineConvertToMatrix(line);
+        multiplyLineMatrixKeyMatrix(line.length());
+        resultToString(line.length());
     }
  
     public static void keytomatrix(String key, int len)
@@ -96,7 +96,7 @@ public class hill {
         }
     }
  
-    public static void linetomatrix(String line)
+    public static void lineConvertToMatrix(String line)
     {
         linematrix = new int[line.length()];
         for (int i = 0; i < line.length(); i++)
@@ -105,7 +105,7 @@ public class hill {
         }
     }
  
-    public static void linemultiplykey(int len)
+    public static void multiplyLineMatrixKeyMatrix(int len)
     {
         resultmatrix = new int[len];
         for (int i = 0; i < len; i++)
@@ -118,7 +118,7 @@ public class hill {
         }
     }
  
-    public static void result(int len)
+    public static void resultToString(int len)
     {
         String result = "";
         for (int i = 0; i < len; i++)
@@ -128,10 +128,10 @@ public class hill {
         System.out.print(result);
     }
  
-    public static boolean check(String key, int len)
+    public static boolean invertableCheck(String key, int len)
     {
         keytomatrix(key, len);
-        int d = determinant(keymatrix, len);
+        int d = calculateDeterminant(keymatrix, len);
         System.out.println(d);
         d = d % 26;
         if (d == 0)
@@ -150,7 +150,7 @@ public class hill {
         }
     }
  
-    public static int determinant(int A[][], int N)
+    public static int calculateDeterminant(int A[][], int N)
     {
         int res;
         if (N == 1)
@@ -177,7 +177,7 @@ public class hill {
                     }
                 }
                 res += Math.pow(-1.0, 1.0 + j1 + 1.0) * A[0][j1]
-                        * determinant(m, N - 1);
+                        * calculateDeterminant(m, N - 1);
             }
         }
         return res;
@@ -213,7 +213,7 @@ public class hill {
                         }
                     }
                 }
-                fac[q][p] = (int) Math.pow(-1, q + p) * determinant(b, f - 1);
+                fac[q][p] = (int) Math.pow(-1, q + p) * calculateDeterminant(b, f - 1);
             }
         }
         trans(fac, f);
@@ -225,8 +225,8 @@ public class hill {
         int b[][], inv[][];
         b = new int[r][r];
         inv = new int[r][r];
-        int d = determinant(keymatrix, r);
-        int mi = mi(d % 26);
+        int d = calculateDeterminant(keymatrix, r);
+        int mi = convertToMatrixInverse(d % 26);
         mi %= 26;
         if (mi < 0)
             mi += 26;
@@ -249,10 +249,10 @@ public class hill {
             }
         }
         System.out.println("\nInverse key:");
-        matrixtoinvkey(inv, r);
+        matrixConvertToInverseKey(inv, r);
     }
  
-    public static int mi(int d)
+    public static int convertToMatrixInverse(int d)
     {
         int q, r1, r2, r, t1, t2, t;
         r1 = 26;
@@ -272,7 +272,7 @@ public class hill {
         return (t1 + t2);
     }
  
-    public static void matrixtoinvkey(int inv[][], int n) {
+    public static void matrixConvertToInverseKey(int inv[][], int n) {
         String invkey = "";
         for (int i = 0; i < n; i++)
         {
