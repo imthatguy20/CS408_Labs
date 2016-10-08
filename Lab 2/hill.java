@@ -9,9 +9,11 @@ public class hill {
     public static String line, key;
     public static double sq;
  
+    // Main method of the program
     public static void main(String args[]) {
-        switch(args[0]){
-            case "-e":
+        try{
+            switch(args[0]){
+                case "-e": // Recognizes flag for encryption
                 System.out.println("Text to be encrypted: ");
                 line = in.nextLine();
                 System.out.println("Key for encryption: ");
@@ -28,7 +30,7 @@ public class hill {
                     }
                 }
                 break;
-            case "-d":
+            case "-d": // Recognizes flag for decryption
                 System.out.println("Text to be decrypted: ");
                 line = in.nextLine();
                 System.out.println("Key for decryption: ");
@@ -45,6 +47,10 @@ public class hill {
                     }
                 }
                 break;
+            }
+        }
+        catch (ArrayIndexOutOfBoundsException e){
+            System.out.println("USAGE: java hill.java [-e] [-d]\n -e Encryption\n -d Decryption");
         }
     }
 
