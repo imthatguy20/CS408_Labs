@@ -47,9 +47,12 @@ public class hill {
                     }
                 }
                 break;
+            default:
+                System.out.println("USAGE: java hill.java [-e] [-d]\n -e Encryption\n -d Decryption");
+                break;
             }
         }
-        catch (ArrayIndexOutOfBoundsException e){
+        catch (ArrayIndexOutOfBoundsException e){ // Catches exception where no flag is given
             System.out.println("USAGE: java hill.java [-e] [-d]\n -e Encryption\n -d Decryption");
         }
     }
