@@ -20,7 +20,7 @@ public class hill {
                 key = in.nextLine();
                 sq = Math.sqrt(key.length());
                 if (sq != (long) sq)
-                    System.out.println("Invalid key length!!! Does not form a square matrix...");
+                    System.out.println("Error: Invalid key length.  Does not form a square matrix!");
                 else {
                     int s = (int) sq;
                     if (invertableCheck(key, s)) {
@@ -37,7 +37,7 @@ public class hill {
                 key = in.nextLine();
                 sq = Math.sqrt(key.length());
                 if (sq != (long) sq)
-                    System.out.println("Invalid key length!!! Does not form a square matrix...");
+                    System.out.println("Error: Invalid key length.  Does not form a square matrix!");
                 else {
                     int s = (int) sq;
                     if (invertableCheck(key, s)) {
@@ -105,7 +105,8 @@ public class hill {
         for (int i = 0; i < line.length(); i++)
         {
             linematrix[i] = ((int) line.charAt(i)) - 97;
-        }g
+        }
+        System.out.print(Arrays.toString(linematrix));
     }
  
     public static void multiplyLineMatrixKeyMatrix(int len)
@@ -139,11 +140,6 @@ public class hill {
         if (d == 0)
         {
             System.out.println("Invalid key!!! Key is not invertible because determinant=0...");
-            return false;
-        }
-        else if (d % 2 == 0 || d % 13 == 0)
-        {
-            System.out.println("Invalid key!!! Key is not invertible because determinant has common factor with 26...");
             return false;
         }
         else
