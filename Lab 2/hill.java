@@ -36,12 +36,11 @@ public class hill {
                             characterIndex++;
                         }
                     }
-                    for(char[] i : divedLine){
-                        System.out.println(Arrays.toString(i));
-                    }
                     if (invertableCheck(key, s)) {
                         System.out.println("Result:");
-                        divide(line, s);
+                        for(char[] row : divedLine){
+                            multiplyLineMatrixKeyMatrix(s, row);
+                        }
                         cofact(keymatrix, s);
                     }
                 }
@@ -57,9 +56,6 @@ public class hill {
                 else {
                     int s = (int) sq;
                     divedLine = new char[line.length() / s][s];
-                    for(char[] i : divedLine){
-                        System.out.println(i);
-                    }
                     int characterIndex = 0;
                     for(int i = 0; i < (line.length() / s); i++){
                         for(int j = 0; j < s; j++){
@@ -67,12 +63,11 @@ public class hill {
                             characterIndex++;
                         }
                     }
-                    for(char[] i : divedLine){
-                        System.out.println(Arrays.toString(i));
-                    }
                     if (invertableCheck(key, s)) {
                         System.out.println("Result:");
-                        divide(line, s);
+                        for(char[] row : divedLine){
+                            multiplyLineMatrixKeyMatrix(s, row);
+                        }
                         cofact(keymatrix, s);
                     }
                 }
@@ -86,31 +81,6 @@ public class hill {
             System.out.println("USAGE: java hill.java [-e] [-d]\n -e Encryption\n -d Decryption");
         }
     }
-
-    public static void divide(String temp, int s)
-    {
-        while (temp.length() > s)
-        {
-            String sub = temp.substring(0, s);
-            temp = temp.substring(s, temp.length());
-            perform(sub);
-        }
-        if (temp.length() == s)
-            perform(temp);
-        else if (temp.length() < s)
-        {
-            for (int i = temp.length(); i < s; i++)
-                temp = temp + 'x';
-            perform(temp);
-        }
-    }
- 
-    public static void perform(String line)
-    {
-        lineConvertToMatrix(line);
-        multiplyLineMatrixKeyMatrix(line.length());
-        resultToString(line.length());
-    }
  
     public static void convertKeyToMatrix(String key, int len)
     {
@@ -120,45 +90,24 @@ public class hill {
         {
             for (int j = 0; j < len; j++)
             {
-                keymatrix[j][i] = alphabet.indexOf(key.charAt(c));
+                keymatrix[i][j] = alphabet.indexOf(key.charAt(c));
                 c++;
             }
         }
-        for (int[] row : keymatrix){
-            System.out.println(Arrays.toString(row));
-        }
     }
  
-    public static void lineConvertToMatrix(String line)
-    {
-        linematrix = new int[line.length()];
-        for (int i = 0; i < line.length(); i++)
-        {   
-            //System.out.println(alphabet.indexOf(line.charAt(i)));
-            linematrix[i] = alphabet.indexOf(line.charAt(i));
-        }
-        //System.out.print(Arrays.toString(linematrix));
-    }
- 
-    public static void multiplyLineMatrixKeyMatrix(int len)
+    public static void multiplyLineMatrixKeyMatrix(int len, char[] row)
     {
         resultmatrix = new int[len];
+        String result = "";
         for (int i = 0; i < len; i++)
         {
             for (int j = 0; j < len; j++)
             {
-                resultmatrix[i] += keymatrix[i][j] * linematrix[j];
+                resultmatrix[i] += keymatrix[j][i] * alphabet.indexOf(row[j]);
+                resultmatrix[i] %= 26;
             }
-            resultmatrix[i] %= 26;
-        }
-    }
- 
-    public static void resultToString(int len)
-    {
-        String result = "";
-        for (int i = 0; i < len; i++)
-        {
-            result += (char) (resultmatrix[i] + 97);
+              result += (char) (resultmatrix[i] + 97);
         }
         System.out.print(result);
     }
@@ -181,14 +130,14 @@ public class hill {
         }
     }
  
-    public static int calculateDeterminant(int A[][], int N)
+    public static int calculateDeterminant(int matrix[][], int N)
     {
         int res;
         if (N == 1)
-            res = A[0][0];
+            res = matrix[0][0];
         else if (N == 2)
         {
-            res = A[0][0] * A[1][1] - A[1][0] * A[0][1];
+            res = matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1];
         }
         else
         {
@@ -203,11 +152,11 @@ public class hill {
                     {
                         if (j == j1)
                             continue;
-                        m[i - 1][j2] = A[i][j];
+                        m[i - 1][j2] = matrix[i][j];
                         j2++;
                     }
                 }
-                res += Math.pow(-1.0, 1.0 + j1 + 1.0) * A[0][j1]* calculateDeterminant(m, N - 1);
+                res += Math.pow(-1.0, 1.0 + j1 + 1.0) * matrix[0][j1]* calculateDeterminant(m, N - 1);
             }
         }
         return res;
@@ -251,29 +200,28 @@ public class hill {
  
     public static void trans(int fac[][], int r)
     {
-        int i, j;
         int b[][], inv[][];
         b = new int[r][r];
         inv = new int[r][r];
         int d = calculateDeterminant(keymatrix, r);
-        int mi = convertToMatrixInverse(d % 26);
-        mi %= 26;
+        int mi = convertToMatrixInverse(d % 26) % 26;
         if (mi < 0)
             mi += 26;
-        for (i = 0; i < r; i++)
+        for (int i = 0; i < r; i++)
         {
-            for (j = 0; j < r; j++)
+            for (int j = 0; j < r; j++)
             {
                 b[i][j] = fac[j][i];
             }
         }
-        for (i = 0; i < r; i++)
+        for (int i = 0; i < r; i++)
         {
-            for (j = 0; j < r; j++)
+            for (int j = 0; j < r; j++)
             {
                 inv[i][j] = b[i][j] % 26;
-                if (inv[i][j] < 0)
+                if (inv[i][j] < 0){
                     inv[i][j] += 26;
+                }
                 inv[i][j] *= mi;
                 inv[i][j] %= 26;
             }
