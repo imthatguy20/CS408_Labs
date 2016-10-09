@@ -1,63 +1,16 @@
-import java.util.*;
+package com.sanfoundry.setandstring;
  
-public class HillCipher {
-    public static int keymatrix[][];
-    public static int linematrix[];
-    public static int resultmatrix[];
-    public static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    public static final Scanner in = new Scanner(System.in);
-    public static String line, key;
-    public static double sq;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
  
-    // Main method of the program
-    public static void main(String args[]) {
-        try{
-            switch(args[0]){
-                case "-e": // Recognizes flag for encryption
-                System.out.println("Text to be encrypted: ");
-                line = in.nextLine();
-                System.out.println("Key for encryption: ");
-                key = in.nextLine();
-                sq = Math.sqrt(key.length());
-                if (sq != (long) sq)
-                    System.out.println("Error: Invalid key length.  Does not form a square matrix!");
-                else {
-                    int s = (int) sq;
-                    if (invertableCheck(key, s)) {
-                        System.out.println("Result:");
-                        divide(line, s);
-                        cofact(keymatrix, s);
-                    }
-                }
-                break;
-            case "-d": // Recognizes flag for decryption
-                System.out.println("Text to be decrypted: ");
-                line = in.nextLine();
-                System.out.println("Key for decryption: ");
-                key = in.nextLine();
-                sq = Math.sqrt(key.length());
-                if (sq != (long) sq)
-                    System.out.println("Error: Invalid key length.  Does not form a square matrix!");
-                else {
-                    int s = (int) sq;
-                    if (invertableCheck(key, s)) {
-                        System.out.println("Result:");
-                        divide(line, s);
-                        cofact(keymatrix, s);
-                    }
-                }
-                break;
-            default:
-                System.out.println("USAGE: java hill.java [-e] [-d]\n -e Encryption\n -d Decryption");
-                break;
-            }
-        }
-        catch (ArrayIndexOutOfBoundsException e){ // Catches exception where no flag is given
-            System.out.println("USAGE: java hill.java [-e] [-d]\n -e Encryption\n -d Decryption");
-        }
-    }
-
-    public static void divide(String temp, int s)
+public class HillCipher
+{
+    int keymatrix[][];
+    int linematrix[];
+    int resultmatrix[];
+ 
+    public void divide(String temp, int s)
     {
         while (temp.length() > s)
         {
@@ -75,14 +28,14 @@ public class HillCipher {
         }
     }
  
-    public static void perform(String line)
+    public void perform(String line)
     {
-        lineConvertToMatrix(line);
-        multiplyLineMatrixKeyMatrix(line.length());
-        resultToString(line.length());
+        linetomatrix(line);
+        linemultiplykey(line.length());
+        result(line.length());
     }
  
-    public static void convertKeyToMatrix(String key, int len)
+    public void keytomatrix(String key, int len)
     {
         keymatrix = new int[len][len];
         int c = 0;
@@ -90,26 +43,22 @@ public class HillCipher {
         {
             for (int j = 0; j < len; j++)
             {
-                keymatrix[j][i] = ((int) key.charAt(c)) - 97;
+                keymatrix[i][j] = ((int) key.charAt(c)) - 97;
                 c++;
             }
         }
-        for (int[] row : keymatrix){
-            System.out.println(Arrays.toString(row));
-        }
     }
  
-    public static void lineConvertToMatrix(String line)
+    public void linetomatrix(String line)
     {
         linematrix = new int[line.length()];
         for (int i = 0; i < line.length(); i++)
         {
             linematrix[i] = ((int) line.charAt(i)) - 97;
         }
-        System.out.print(Arrays.toString(linematrix));
     }
  
-    public static void multiplyLineMatrixKeyMatrix(int len)
+    public void linemultiplykey(int len)
     {
         resultmatrix = new int[len];
         for (int i = 0; i < len; i++)
@@ -122,7 +71,7 @@ public class HillCipher {
         }
     }
  
-    public static void resultToString(int len)
+    public void result(int len)
     {
         String result = "";
         for (int i = 0; i < len; i++)
@@ -132,14 +81,21 @@ public class HillCipher {
         System.out.print(result);
     }
  
-    public static boolean invertableCheck(String key, int len)
+    public boolean check(String key, int len)
     {
-        convertKeyToMatrix(key, len);
-        int d = calculateDeterminant(keymatrix, len);
+        keytomatrix(key, len);
+        int d = determinant(keymatrix, len);
         d = d % 26;
         if (d == 0)
         {
-            System.out.println("Invalid key!!! Key is not invertible because determinant=0...");
+            System.out
+                    .println("Invalid key!!! Key is not invertible because determinant=0...");
+            return false;
+        }
+        else if (d % 2 == 0 || d % 13 == 0)
+        {
+            System.out
+                    .println("Invalid key!!! Key is not invertible because determinant has common factor with 26...");
             return false;
         }
         else
@@ -148,7 +104,7 @@ public class HillCipher {
         }
     }
  
-    public static int calculateDeterminant(int A[][], int N)
+    public int determinant(int A[][], int N)
     {
         int res;
         if (N == 1)
@@ -175,13 +131,13 @@ public class HillCipher {
                     }
                 }
                 res += Math.pow(-1.0, 1.0 + j1 + 1.0) * A[0][j1]
-                        * calculateDeterminant(m, N - 1);
+                        * determinant(m, N - 1);
             }
         }
         return res;
     }
  
-    public static void cofact(int num[][], int f)
+    public void cofact(int num[][], int f)
     {
         int b[][], fac[][];
         b = new int[f][f];
@@ -211,20 +167,20 @@ public class HillCipher {
                         }
                     }
                 }
-                fac[q][p] = (int) Math.pow(-1, q + p) * calculateDeterminant(b, f - 1);
+                fac[q][p] = (int) Math.pow(-1, q + p) * determinant(b, f - 1);
             }
         }
         trans(fac, f);
     }
  
-    public static void trans(int fac[][], int r)
+    void trans(int fac[][], int r)
     {
         int i, j;
         int b[][], inv[][];
         b = new int[r][r];
         inv = new int[r][r];
-        int d = calculateDeterminant(keymatrix, r);
-        int mi = convertToMatrixInverse(d % 26);
+        int d = determinant(keymatrix, r);
+        int mi = mi(d % 26);
         mi %= 26;
         if (mi < 0)
             mi += 26;
@@ -247,10 +203,10 @@ public class HillCipher {
             }
         }
         System.out.println("\nInverse key:");
-        matrixConvertToInverseKey(inv, r);
+        matrixtoinvkey(inv, r);
     }
  
-    public static int convertToMatrixInverse(int d)
+    public int mi(int d)
     {
         int q, r1, r2, r, t1, t2, t;
         r1 = 26;
@@ -270,7 +226,8 @@ public class HillCipher {
         return (t1 + t2);
     }
  
-    public static void matrixConvertToInverseKey(int inv[][], int n) {
+    public void matrixtoinvkey(int inv[][], int n)
+    {
         String invkey = "";
         for (int i = 0; i < n; i++)
         {
@@ -279,6 +236,33 @@ public class HillCipher {
                 invkey += (char) (inv[i][j] + 97);
             }
         }
-        System.out.print(invkey+"\n");
+        System.out.print(invkey);
+    }
+ 
+    public static void main(String args[]) throws IOException
+    {
+        HillCipher obj = new HillCipher();
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        int choice;
+        System.out.println("Menu:\n1: Encryption\n2: Decryption");
+        choice = Integer.parseInt(in.readLine());
+        System.out.println("Enter the line: ");
+        String line = in.readLine();
+        System.out.println("Enter the key: ");
+        String key = in.readLine();
+        double sq = Math.sqrt(key.length());
+        if (sq != (long) sq)
+            System.out
+                    .println("Invalid key length!!! Does not form a square matrix...");
+        else
+        {
+            int s = (int) sq;
+            if (obj.check(key, s))
+            {
+                System.out.println("Result:");
+                obj.divide(line, s);
+                obj.cofact(obj.keymatrix, s);
+            }
+        }
     }
 }

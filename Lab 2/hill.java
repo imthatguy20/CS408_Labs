@@ -5,6 +5,7 @@ public class hill {
     public static int keymatrix[][];
     public static int linematrix[];
     public static int resultmatrix[];
+    public static char[][] divedLine;
     public static String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     public static final Scanner in = new Scanner(System.in);
     public static String line, key;
@@ -24,6 +25,20 @@ public class hill {
                     System.out.println("Error: Invalid key length.  Does not form a square matrix!");
                 else {
                     int s = (int) sq;
+                    while(line.length() % s != 0){ // Add aditional chars if the length won't work with key
+                        line = line + 'X';
+                    }
+                    divedLine = new char[line.length() / s][s];
+                    int characterIndex = 0;
+                    for(int i = 0; i < (line.length() / s); i++){
+                        for(int j = 0; j < s; j++){
+                            divedLine[i][j] = line.charAt(characterIndex);
+                            characterIndex++;
+                        }
+                    }
+                    for(char[] i : divedLine){
+                        System.out.println(Arrays.toString(i));
+                    }
                     if (invertableCheck(key, s)) {
                         System.out.println("Result:");
                         divide(line, s);
@@ -41,6 +56,20 @@ public class hill {
                     System.out.println("Error: Invalid key length.  Does not form a square matrix!");
                 else {
                     int s = (int) sq;
+                    divedLine = new char[line.length() / s][s];
+                    for(char[] i : divedLine){
+                        System.out.println(i);
+                    }
+                    int characterIndex = 0;
+                    for(int i = 0; i < (line.length() / s); i++){
+                        for(int j = 0; j < s; j++){
+                            divedLine[i][j] = line.charAt(characterIndex);
+                            characterIndex++;
+                        }
+                    }
+                    for(char[] i : divedLine){
+                        System.out.println(Arrays.toString(i));
+                    }
                     if (invertableCheck(key, s)) {
                         System.out.println("Result:");
                         divide(line, s);
@@ -91,7 +120,7 @@ public class hill {
         {
             for (int j = 0; j < len; j++)
             {
-                keymatrix[i][j] = alphabet.indexOf(key.charAt(c));
+                keymatrix[j][i] = alphabet.indexOf(key.charAt(c));
                 c++;
             }
         }
@@ -118,7 +147,7 @@ public class hill {
         {
             for (int j = 0; j < len; j++)
             {
-                resultmatrix[i] += keymatrix[j][i] * linematrix[j];
+                resultmatrix[i] += keymatrix[i][j] * linematrix[j];
             }
             resultmatrix[i] %= 26;
         }
@@ -178,8 +207,7 @@ public class hill {
                         j2++;
                     }
                 }
-                res += Math.pow(-1.0, 1.0 + j1 + 1.0) * A[0][j1]
-                        * calculateDeterminant(m, N - 1);
+                res += Math.pow(-1.0, 1.0 + j1 + 1.0) * A[0][j1]* calculateDeterminant(m, N - 1);
             }
         }
         return res;
@@ -260,22 +288,6 @@ public class hill {
         BigInteger two = BigInteger.valueOf(26);
         BigInteger multiplicativeInverse = one.modInverse(two);
         return multiplicativeInverse.intValue();
-        // int q, r1, r2, r, t1, t2, t;
-        // r1 = 26;
-        // r2 = d;
-        // t1 = 0;
-        // t2 = 1;
-        // while (r1 != 1 && r2 != 0)
-        // {
-        //     q = r1 / r2;
-        //     r = r1 % r2;
-        //     t = t1 - (t2 * q);
-        //     r1 = r2;
-        //     r2 = r;
-        //     t1 = t2;
-        //     t2 = t;
-        // }
-        // return (t1 + t2);
     }
  
     public static void matrixConvertToInverseKey(int inv[][], int n) {
