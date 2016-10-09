@@ -105,7 +105,7 @@ public class hill {
         for (int i = 0; i < line.length(); i++)
         {
             linematrix[i] = ((int) line.charAt(i)) - 97;
-        }
+        }g
     }
  
     public static void multiplyLineMatrixKeyMatrix(int len)
