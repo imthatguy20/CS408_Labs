@@ -41,7 +41,7 @@ public class hill {
                         for(char[] row : divedLine){
                             multiplyLineMatrixKeyMatrix(s, row);
                         }
-                        cofact(keymatrix, s);
+                        calculateInverseMatrix(keymatrix, s);
                     }
                 }
                 break;
@@ -68,7 +68,7 @@ public class hill {
                         for(char[] row : divedLine){
                             multiplyLineMatrixKeyMatrix(s, row);
                         }
-                        cofact(keymatrix, s);
+                        calculateInverseMatrix(keymatrix, s);
                     }
                 }
                 break;
@@ -116,53 +116,59 @@ public class hill {
     {
         convertKeyToMatrix(key, len);
         int d = calculateDeterminant(keymatrix, len);
+        int trueOrFalse;
+        boolean boolVal = false;
         d = d % 26;
-        if(d == 0){
-            System.out.println("Can not use key! Determinant is zero!");
-            return false;
+        trueOrFalse = d == 0 ? 0 : (d % 2 == 0 || d % 13 == 0) ? 0 : 1;
+        switch(trueOrFalse){
+            case 0:
+                System.out.println("Error: Key can not be used!");
+                boolVal = false;
+            case 1:
+                boolVal = true;
         }
-        else if(d % 2 == 0 || d % 13 == 0) {
-            System.out.print("Can not use key! The determinant does not have a multiplicative inverse with mod 26.");
-            return false;
-        }
-        else {
-            return true;
-        }
+        return boolVal;
     }
  
     public static int calculateDeterminant(int matrix[][], int N)
     {
-        int res;
-        if (N == 1)
-            res = matrix[0][0];
-        else if (N == 2)
-        {
-            res = matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1];
-        }
-        else
-        {
-            res = 0;
-            for (int j1 = 0; j1 < N; j1++)
-            {
-                int m[][] = new int[N - 1][N - 1];
-                for (int i = 1; i < N; i++)
+        int res = 0, topRowVal = 0, subDeterminant = 0;
+        double multiplier = 0;
+        switch(N){
+            case 1:
+                res = matrix[0][0];
+                break;
+            case 2:
+                int multiplyAD = matrix[0][0] * matrix[1][1];
+                int multiplyBC = matrix[1][0] * matrix[0][1];
+                res = multiplyAD - multiplyBC;
+                break;
+            default:
+                for (int j1 = 0; j1 < N; j1++)
                 {
-                    int j2 = 0;
-                    for (int j = 0; j < N; j++)
+                    int m[][] = new int[N - 1][N - 1];
+                    for (int i = 1; i < N; i++)
                     {
-                        if (j == j1)
-                            continue;
-                        m[i - 1][j2] = matrix[i][j];
-                        j2++;
+                        int j2 = 0;
+                        for (int j = 0; j < N; j++)
+                        {
+                            if (j == j1)
+                                continue;
+                            m[i - 1][j2] = matrix[i][j];
+                            j2++;
+                        }
                     }
+                    multiplier = Math.pow(-1, j1 + 2);
+                    topRowVal = matrix[0][j1];
+                    subDeterminant = calculateDeterminant(m, N - 1);
+                   res += multiplier * topRowVal * subDeterminant;
                 }
-                res += Math.pow(-1.0, 1.0 + j1 + 1.0) * matrix[0][j1]* calculateDeterminant(m, N - 1);
-            }
+                break;
         }
         return res;
     }
  
-    public static void cofact(int num[][], int f)
+    public static void calculateInverseMatrix(int num[][], int f)
     {
         int b[][], fac[][];
         b = new int[f][f];
@@ -195,39 +201,31 @@ public class hill {
                 fac[q][p] = (int) Math.pow(-1, q + p) * calculateDeterminant(b, f - 1);
             }
         }
-        trans(fac, f);
-    }
- 
-    public static void trans(int fac[][], int r)
-    {
-        int b[][], inv[][];
-        b = new int[r][r];
-        inv = new int[r][r];
-        int d = calculateDeterminant(keymatrix, r);
+        int inv[][];
+        b = new int[f][f];
+        inv = new int[f][f];
+        int d = calculateDeterminant(keymatrix, f);
         int mi = convertToMatrixInverse(d % 26) % 26;
-        if (mi < 0)
-            mi += 26;
-        for (int i = 0; i < r; i++)
+        mi += (mi < 0) ? 26 : 0;
+        for (i = 0; i < f; i++)
         {
-            for (int j = 0; j < r; j++)
+            for (j = 0; j < f; j++)
             {
                 b[i][j] = fac[j][i];
             }
         }
-        for (int i = 0; i < r; i++)
+        for (i = 0; i < f; i++)
         {
-            for (int j = 0; j < r; j++)
+            for (j = 0; j < f; j++)
             {
                 inv[i][j] = b[i][j] % 26;
-                if (inv[i][j] < 0){
-                    inv[i][j] += 26;
-                }
+                inv[i][j] += (inv[i][j] < 0) ? 26 : 0;
                 inv[i][j] *= mi;
                 inv[i][j] %= 26;
             }
         }
         System.out.println("\nInverse key:");
-        matrixConvertToInverseKey(inv, r);
+        matrixConvertToInverseKey(inv, f);
     }
  
     public static int convertToMatrixInverse(int d)
