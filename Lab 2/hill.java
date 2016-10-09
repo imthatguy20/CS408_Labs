@@ -118,7 +118,7 @@ public class hill {
         {
             for (int j = 0; j < len; j++)
             {
-                resultmatrix[i] += keymatrix[i][j] * linematrix[j];
+                resultmatrix[i] += keymatrix[j][i] * linematrix[j];
             }
             resultmatrix[i] %= 26;
         }
