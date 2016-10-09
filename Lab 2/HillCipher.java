@@ -1,11 +1,10 @@
 import java.util.*;
-import java.math.BigInteger;
  
-public class hill {
+public class HillCipher {
     public static int keymatrix[][];
     public static int linematrix[];
     public static int resultmatrix[];
-    public static String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     public static final Scanner in = new Scanner(System.in);
     public static String line, key;
     public static double sq;
@@ -16,9 +15,9 @@ public class hill {
             switch(args[0]){
                 case "-e": // Recognizes flag for encryption
                 System.out.println("Text to be encrypted: ");
-                line = in.nextLine().toUpperCase();
+                line = in.nextLine();
                 System.out.println("Key for encryption: ");
-                key = in.nextLine().toUpperCase();
+                key = in.nextLine();
                 sq = Math.sqrt(key.length());
                 if (sq != (long) sq)
                     System.out.println("Error: Invalid key length.  Does not form a square matrix!");
@@ -33,9 +32,9 @@ public class hill {
                 break;
             case "-d": // Recognizes flag for decryption
                 System.out.println("Text to be decrypted: ");
-                line = in.nextLine().toUpperCase();
+                line = in.nextLine();
                 System.out.println("Key for decryption: ");
-                key = in.nextLine().toUpperCase();
+                key = in.nextLine();
                 sq = Math.sqrt(key.length());
                 if (sq != (long) sq)
                     System.out.println("Error: Invalid key length.  Does not form a square matrix!");
@@ -91,7 +90,7 @@ public class hill {
         {
             for (int j = 0; j < len; j++)
             {
-                keymatrix[i][j] = alphabet.indexOf(key.charAt(c));
+                keymatrix[j][i] = ((int) key.charAt(c)) - 97;
                 c++;
             }
         }
@@ -104,11 +103,10 @@ public class hill {
     {
         linematrix = new int[line.length()];
         for (int i = 0; i < line.length(); i++)
-        {   
-            //System.out.println(alphabet.indexOf(line.charAt(i)));
-            linematrix[i] = alphabet.indexOf(line.charAt(i));
+        {
+            linematrix[i] = ((int) line.charAt(i)) - 97;
         }
-        //System.out.print(Arrays.toString(linematrix));
+        System.out.print(Arrays.toString(linematrix));
     }
  
     public static void multiplyLineMatrixKeyMatrix(int len)
@@ -139,15 +137,13 @@ public class hill {
         convertKeyToMatrix(key, len);
         int d = calculateDeterminant(keymatrix, len);
         d = d % 26;
-        if(d == 0){
-            System.out.println("Can not use key! Determinant is zero!");
+        if (d == 0)
+        {
+            System.out.println("Invalid key!!! Key is not invertible because determinant=0...");
             return false;
         }
-        else if(d % 2 == 0 || d % 13 == 0) {
-            System.out.print("Can not use key! The determinant does not have a multiplicative inverse with mod 26.");
-            return false;
-        }
-        else {
+        else
+        {
             return true;
         }
     }
@@ -256,26 +252,22 @@ public class hill {
  
     public static int convertToMatrixInverse(int d)
     {
-        BigInteger one = BigInteger.valueOf(d);
-        BigInteger two = BigInteger.valueOf(26);
-        BigInteger multiplicativeInverse = one.modInverse(two);
-        return multiplicativeInverse.intValue();
-        // int q, r1, r2, r, t1, t2, t;
-        // r1 = 26;
-        // r2 = d;
-        // t1 = 0;
-        // t2 = 1;
-        // while (r1 != 1 && r2 != 0)
-        // {
-        //     q = r1 / r2;
-        //     r = r1 % r2;
-        //     t = t1 - (t2 * q);
-        //     r1 = r2;
-        //     r2 = r;
-        //     t1 = t2;
-        //     t2 = t;
-        // }
-        // return (t1 + t2);
+        int q, r1, r2, r, t1, t2, t;
+        r1 = 26;
+        r2 = d;
+        t1 = 0;
+        t2 = 1;
+        while (r1 != 1 && r2 != 0)
+        {
+            q = r1 / r2;
+            r = r1 % r2;
+            t = t1 - (t2 * q);
+            r1 = r2;
+            r2 = r;
+            t1 = t2;
+            t2 = t;
+        }
+        return (t1 + t2);
     }
  
     public static void matrixConvertToInverseKey(int inv[][], int n) {
@@ -286,9 +278,6 @@ public class hill {
             {
                 invkey += (char) (inv[i][j] + 97);
             }
-        }
-        for (int[] r : inv){
-            System.out.println(Arrays.toString(r));
         }
         System.out.print(invkey+"\n");
     }
