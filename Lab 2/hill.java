@@ -132,7 +132,7 @@ public class hill {
  
     public static int calculateDeterminant(int matrix[][], int N)
     {
-        int res = 0, topRowVal = 0, subDeterminant = 0;
+        int res = 0, topRowVal, subDeterminant;
         double multiplier = 0;
         switch(N){
             case 1:
@@ -168,68 +168,53 @@ public class hill {
         return res;
     }
  
-    public static void calculateInverseMatrix(int num[][], int f)
+    public static void calculateInverseMatrix(int num[][], int size)
     {
-        int b[][], fac[][];
-        b = new int[f][f];
-        fac = new int[f][f];
-        int p, q, m, n, i, j;
-        for (q = 0; q < f; q++)
-        {
-            for (p = 0; p < f; p++)
-            {
+        int b[][] = new int[size][size];
+        int fac[][] = new int[size][size];
+        int inv[][] = new int[size][size];
+        int d[][] = new int[size][size];
+        int m, n;
+        for (int q = 0; q < size; q++) {
+            for (int p = 0; p < size; p++) {
                 m = 0;
                 n = 0;
-                for (i = 0; i < f; i++)
-                {
-                    for (j = 0; j < f; j++)
-                    {
-                        b[i][j] = 0;
-                        if (i != q && j != p)
-                        {
-                            b[m][n] = num[i][j];
-                            if (n < (f - 2))
+                for (int i = 0; i < size; i++) {
+                    for (int j = 0; j < size; j++) {
+                        d[i][j] = 0;
+                        if (i != q && j != p) {
+                            d[m][n] = num[i][j];
+                            if (n < (size - 2))
                                 n++;
-                            else
-                            {
+                            else {
                                 n = 0;
                                 m++;
                             }
                         }
                     }
                 }
-                fac[q][p] = (int) Math.pow(-1, q + p) * calculateDeterminant(b, f - 1);
+                fac[q][p] = (int) Math.pow(-1, q + p) * calculateDeterminant(d, size - 1);
             }
         }
-        int inv[][];
-        b = new int[f][f];
-        inv = new int[f][f];
-        int d = calculateDeterminant(keymatrix, f);
-        int mi = convertToMatrixInverse(d % 26) % 26;
+        int mi = convertToMatrixInverse(calculateDeterminant(keymatrix, size) % 26) % 26;
         mi += (mi < 0) ? 26 : 0;
-        for (i = 0; i < f; i++)
-        {
-            for (j = 0; j < f; j++)
-            {
-                b[i][j] = fac[j][i];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                d[i][j] = fac[j][i];
             }
         }
-        for (i = 0; i < f; i++)
-        {
-            for (j = 0; j < f; j++)
-            {
-                inv[i][j] = b[i][j] % 26;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                inv[i][j] = (d[i][j] * mi) % 26;
                 inv[i][j] += (inv[i][j] < 0) ? 26 : 0;
-                inv[i][j] *= mi;
                 inv[i][j] %= 26;
             }
         }
         System.out.println("\nInverse key:");
-        matrixConvertToInverseKey(inv, f);
+        matrixConvertToInverseKey(inv, size);
     }
  
-    public static int convertToMatrixInverse(int d)
-    {
+    public static int convertToMatrixInverse(int d) {
         BigInteger one = BigInteger.valueOf(d);
         BigInteger two = BigInteger.valueOf(26);
         BigInteger multiplicativeInverse = one.modInverse(two);
@@ -238,15 +223,10 @@ public class hill {
  
     public static void matrixConvertToInverseKey(int inv[][], int n) {
         String invkey = "";
-        for (int i = 0; i < n; i++)
-        {
-            for (int j = 0; j < n; j++)
-            {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
                 invkey += (char) (inv[i][j] + 97);
             }
-        }
-        for (int[] r : inv){
-            System.out.println(Arrays.toString(r));
         }
         System.out.print(invkey+"\n");
     }
