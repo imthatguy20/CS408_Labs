@@ -1,4 +1,4 @@
-import java.util.Scanner;
+import java.util.*;
  
 public class hill {
     public static int keymatrix[][];
@@ -82,7 +82,7 @@ public class hill {
         resultToString(line.length());
     }
  
-    public static void keytomatrix(String key, int len)
+    public static void convertKeyToMatrix(String key, int len)
     {
         keymatrix = new int[len][len];
         int c = 0;
@@ -90,9 +90,12 @@ public class hill {
         {
             for (int j = 0; j < len; j++)
             {
-                keymatrix[i][j] = ((int) key.charAt(c)) - 97;
+                keymatrix[j][i] = ((int) key.charAt(c)) - 97;
                 c++;
             }
+        }
+        for (int[] row : keymatrix){
+            System.out.println(Arrays.toString(row));
         }
     }
  
@@ -130,9 +133,8 @@ public class hill {
  
     public static boolean invertableCheck(String key, int len)
     {
-        keytomatrix(key, len);
+        convertKeyToMatrix(key, len);
         int d = calculateDeterminant(keymatrix, len);
-        System.out.println(d);
         d = d % 26;
         if (d == 0)
         {
