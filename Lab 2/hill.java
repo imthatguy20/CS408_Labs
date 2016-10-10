@@ -8,72 +8,77 @@ public class hill {
     public static String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     public static final Scanner in = new Scanner(System.in);
     public static String line, key;
-    public static double sq;
+    public static double squareRoot;
  
     // Main method of the program
     public static void main(String args[]) {
         try{
             switch(args[0]){
                 case "-e": // Recognizes flag for encryption
-                System.out.println("Text to be encrypted: ");
+                System.out.println("\nText to be encrypted: ");
                 line = in.nextLine().toUpperCase();
-                System.out.println("Key for encryption: ");
+                line = line.replaceAll("[^A-Z]", "");
+                System.out.println("\nKey for encryption: ");
                 key = in.nextLine().toUpperCase();
-                sq = Math.sqrt(key.length());
-                codec(line, key, sq);
+                key = key.replaceAll("[^A-Z]", "");
+                squareRoot = Math.sqrt(key.length());
+                codec(line, key, squareRoot);
                 break;
             case "-d": // Recognizes flag for decryption
-                System.out.println("Text to be decrypted: ");
+                System.out.println("\nText to be decrypted: ");
                 line = in.nextLine().toUpperCase();
-                System.out.println("Key for decryption: ");
+                line = line.replaceAll("[^A-Z]", "");
+                System.out.println("\nKey for decryption: ");
                 key = in.nextLine().toUpperCase();
-                sq = Math.sqrt(key.length());
-                codec(line, key, sq);
+                key = key.replaceAll("[^A-Z]", "");
+                squareRoot = Math.sqrt(key.length());
+                codec(line, key, squareRoot);
                 break;
             default:
-                System.out.println("USAGE: java hill.java [-e] [-d]\n -e Encryption\n -d Decryption");
+                System.out.println("\nUSAGE: java hill.java [-e] [-d]\n -e Encryption\n -d Decryption");
                 break;
             }
         }
         catch (ArrayIndexOutOfBoundsException e){ // Catches exception where no flag is given
-            System.out.println("USAGE: java hill.java [-e] [-d]\n -e Encryption\n -d Decryption");
+            System.out.println("\nUSAGE: java hill.java [-e] [-d]\n -e Encryption\n -d Decryption");
         }
     }
  
-    public static void codec(String line, String key, double sq){
-        if (sq != (long) sq)
-            System.out.println("Error: Invalid key length.  Does not form a square matrix!");
+    // Runs all of the necesary methods for encryption and decryption
+    public static void codec(String line, String key, double squareRoot){
+        if (squareRoot != (long) squareRoot)
+            System.out.println("\nError: Invalid key length.  Does not form a square matrix!");
         else {
-            int s = (int) sq;
-            while(line.length() % s != 0) {
+            int s = (int) squareRoot;
+            while(line.length() % s != 0) { // If the plaintext can not be dived evenly, add X until it can
                 line += 'X';
             }
-            divedLine = new char[line.length() / s][s];
+            divedLine = new char[line.length() / s][s]; // Creates the appropriately sized matrix depending on the key
             int characterIndex = 0;
-            for(int i = 0; i < (line.length() / s); i++){
+            for(int i = 0; i < (line.length() / s); i++){ // Adds letters to the matrix
                 for(int j = 0; j < s; j++){
                     divedLine[i][j] = line.charAt(characterIndex);
                     characterIndex++;
                 }
             }
-            if (invertableCheck(key, s)) {
-                System.out.println("Result:");
-                for(char[] row : divedLine){
-                    multiplyLineMatrixKeyMatrix(s, row);
+            if (invertableCheck(key, s)) { // Makes sure that the key is invertable.  If not, end the program
+                System.out.println("\nResulting Text:");
+                for(char[] row : divedLine){ 
+                    multiplyLineMatrixKeyMatrix(s, row); // Multiply key and plaintext
                 }
-                calculateInverseMatrix(keyMatrix, s);
+                calculateInverseMatrix(keyMatrix, s); // Get the inverse key for decryption
             }
         }
     }
  
     // Multiplies the key matrix and the specific row matrix for a chunk of text
-    public static void multiplyLineMatrixKeyMatrix(int len, char[] row)
+    public static void multiplyLineMatrixKeyMatrix(int length, char[] row)
     {
-        resultMatrix = new int[len];
+        resultMatrix = new int[length];
         int keyMatrixIndex, lineMatrixIndex;
         String res = "";
-        for (int i = 0; i < len; i++) {
-            for (int j = 0; j < len; j++) {
+        for (int i = 0; i < length; i++) {
+            for (int j = 0; j < length; j++) {
                 keyMatrixIndex = keyMatrix[j][i]; 
                 lineMatrixIndex = alphabet.indexOf(row[j]);
                 resultMatrix[i] += keyMatrixIndex * lineMatrixIndex; // Values are calculated and added together
@@ -91,24 +96,25 @@ public class hill {
     be used.  This is required since the key must be inverted for 
     decryption.
     */
-    public static boolean invertableCheck(String key, int len)
+    public static boolean invertableCheck(String key, int length)
     {
-        keyMatrix = new int[len][len];
+        keyMatrix = new int[length][length];
         int c = 0;
-        for (int i = 0; i < len; i++) {
-            for (int j = 0; j < len; j++) {
+        for (int i = 0; i < length; i++) {
+            for (int j = 0; j < length; j++) {
                 int letterIndex = alphabet.indexOf(key.charAt(c));
                 keyMatrix[j][i] = letterIndex;
                 c++;
             }
         }
-        int d = calculateDeterminant(keyMatrix, len);
+        int determinant = calculateDeterminant(keyMatrix, length); 
         int trueOrFalse;
         boolean boolVal = false;
-        d = d % 26;
-        trueOrFalse = d == 0 ? 0 : (d % 2 == 0 || d % 13 == 0) ? 0 : 1;
+        determinant = determinant % 26;
+        trueOrFalse = determinant == 0 ? 0 : 
+            (determinant % 2 == 0 || determinant % 13 == 0) ? 0 : 1; // If the key has a common factors with 26 it can not be used.
         switch(trueOrFalse){
-            case 0:
+            case 0: // If the determinant is zero the key can not be used
                 System.out.println("Error: Key can not be used!");
                 break;
             case 1:
@@ -156,7 +162,7 @@ public class hill {
     }
 
      // Calculates the inverse of the key matrix for decryption
-    public static void calculateInverseMatrix(int num[][], int size)
+    public static void calculateInverseMatrix(int inputMatrix[][], int size)
     {
         int res[][] = new int[size][size]; // Matrix to store first portion end result values after all ops
         int inverseMatrix[][] = new int[size][size]; // Stores inverse matrix
@@ -178,7 +184,7 @@ public class hill {
                     for (int minorMatCol = 0; minorMatCol < size; minorMatCol++) {
                         preResultMat[minorMatRow][minorMatCol] = 0;
                         if (minorMatRow != matOfMinorsRow && minorMatCol != matOfMinorsCol) { // Makes sure next set of minor matrix values do not fall on "dividing lines"
-                            int inputMatIndex = num[minorMatRow][minorMatCol];
+                            int inputMatIndex = inputMatrix[minorMatRow][minorMatCol];
                             preResultMat[resultRow][resultCol] = inputMatIndex;
                             if (resultCol < (size - 2)){ 
                                 resultCol++; 
@@ -209,7 +215,7 @@ public class hill {
                 invkey += letterIndex;
             }
         }
-        System.out.println("\nInverse key:");
+        System.out.println("\n\nInverse key:");
         System.out.print(invkey+"\n");
     }
  
@@ -218,8 +224,8 @@ public class hill {
     This is crucial when finding the modular inverse of a matrix
     to be used for decryption.
      */
-    public static int calculateMultInverse(int d) {
-        BigInteger one = BigInteger.valueOf(d);
+    public static int calculateMultInverse(int determinant) {
+        BigInteger one = BigInteger.valueOf(determinant);
         BigInteger two = BigInteger.valueOf(26);
         BigInteger multiplicativeInverse = one.modInverse(two); // Calculates the multiplicative inverse
         return multiplicativeInverse.intValue();
