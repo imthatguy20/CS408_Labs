@@ -172,46 +172,45 @@ public class hill {
     {
         int b[][] = new int[size][size];
         int fac[][] = new int[size][size];
-        int inv[][] = new int[size][size];
-        int d[][] = new int[size][size];
-        int m, n;
-        for (int q = 0; q < size; q++) {
-            for (int p = 0; p < size; p++) {
-                m = 0;
-                n = 0;
-                for (int i = 0; i < size; i++) {
-                    for (int j = 0; j < size; j++) {
-                        d[i][j] = 0;
-                        if (i != q && j != p) {
-                            d[m][n] = num[i][j];
-                            if (n < (size - 2))
-                                n++;
-                            else {
-                                n = 0;
-                                m++;
-                            }
+        int inverseMatrix[][] = new int[size][size];
+        int preResultMat[][] = new int[size][size];
+        int resultRow, resultCol, multiplier, subDeterminant;
+        /*
+        First set of loops gets the matrix of minors row and column where the lines meet.
+        This will determine what values in the matrix make up a specific minor matrix. From 
+        there the determinate of the minor matrix is calculated and fills the index with that
+        value in the new matrix.
+        */
+        for (int matOfMinorsRow = 0; matOfMinorsRow < size; matOfMinorsRow++) {
+            for (int matOfMinorsCol = 0; matOfMinorsCol < size; matOfMinorsCol++) {
+                resultRow = 0;
+                resultCol = 0;
+                for (int minorMatRow = 0; minorMatRow < size; minorMatRow++) {
+                    for (int minorMatCol = 0; minorMatCol < size; minorMatCol++) {
+                        preResultMat[minorMatRow][minorMatCol] = 0;
+                        if (minorMatRow != matOfMinorsRow && minorMatCol != matOfMinorsCol) {
+                            preResultMat[resultRow][resultCol] = num[minorMatRow][minorMatCol]; 
+                            resultRow = (resultCol < (size - 2)) ? resultCol++ : 0; // Increment or set to zero
+                            resultCol += (resultCol < (size - 2)) ? 0 : 1; // Add one if the condition is not true 
                         }
                     }
                 }
-                fac[q][p] = (int) Math.pow(-1, q + p) * calculateDeterminant(d, size - 1);
+                multiplier = (int) Math.pow(-1, matOfMinorsCol + matOfMinorsRow); // Determines if the index in the array should be a possitive or negative value
+                subDeterminant = calculateDeterminant(preResultMat, size - 1); // Calculates the determinant of the subarray matrix of minors
+                fac[matOfMinorsCol][matOfMinorsRow] = multiplier * subDeterminant; // Assigns
             }
         }
-        int mi = convertToMatrixInverse(calculateDeterminant(keymatrix, size) % 26) % 26;
-        mi += (mi < 0) ? 26 : 0;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                d[i][j] = fac[j][i];
-            }
-        }
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                inv[i][j] = (d[i][j] * mi) % 26;
-                inv[i][j] += (inv[i][j] < 0) ? 26 : 0;
-                inv[i][j] %= 26;
+        int multInvDet = convertToMatrixInverse(calculateDeterminant(keymatrix, size) % 26) % 26;
+        multInvDet += (multInvDet < 0) ? 26 : 0;
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                inverseMatrix[row][col] = (fac[row][col] * multInvDet) % 26;
+                inverseMatrix[row][col] += (inverseMatrix[row][col] < 0) ? 26 : 0;
+                inverseMatrix[row][col] %= 26;
             }
         }
         System.out.println("\nInverse key:");
-        matrixConvertToInverseKey(inv, size);
+        matrixConvertToInverseKey(inverseMatrix, size);
     }
  
     public static int convertToMatrixInverse(int d) {
@@ -221,11 +220,11 @@ public class hill {
         return multiplicativeInverse.intValue();
     }
  
-    public static void matrixConvertToInverseKey(int inv[][], int n) {
+    public static void matrixConvertToInverseKey(int inverseMatrix[][], int n) {
         String invkey = "";
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                invkey += (char) (inv[i][j] + 97);
+                invkey += (char) (inverseMatrix[i][j] + 97);
             }
         }
         System.out.print(invkey+"\n");
