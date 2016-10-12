@@ -124,7 +124,11 @@ public class hill {
         return boolVal;
     }
  
-    // Calculates the determinant of the inputted matrix.
+    /* 
+    Calculates the determinant of the inputted matrix. 
+    This will be useful for different applications throughout the code when determining 
+    if there will be an inverse and then for finding the inverse of key matrix.
+    */
     public static int calculateDeterminant(int matrix[][], int size)
     {
         int res = 0, topRowVal, subDeterminant;
