@@ -47,6 +47,8 @@ public class hill {
     public static void codec(String line, String key, double squareRoot){
         if (squareRoot != (long) squareRoot)
             System.out.println("\nError: Invalid key length.  Does not form a square matrix!");
+        else if (key.length() != 4 && key.length() != 9)
+            System.out.println("\nError: Key can only be of length 4 or 9!");
         else {
             int s = (int) squareRoot;
             while(line.length() % s != 0) { // If the plaintext can not be dived evenly, add X until it can
