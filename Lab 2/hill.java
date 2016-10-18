@@ -43,7 +43,6 @@ public class hill {
             System.out.println("\nUSAGE: java hill.java [-e] [-d]\n -e Encryption\n -d Decryption");
         }
     }
- 
     // Runs all of the necesary methods for encryption and decryption
     public static void codec(String line, String key, double squareRoot){
         if (squareRoot != (long) squareRoot)
@@ -70,7 +69,6 @@ public class hill {
             }
         }
     }
- 
     // Multiplies the key matrix and the specific row matrix for a chunk of text
     public static void multiplyLineMatrixKeyMatrix(int length, char[] row)
     {
@@ -84,12 +82,11 @@ public class hill {
                 resultMatrix[i] += keyMatrixIndex * lineMatrixIndex; // Values are calculated and added together
                 resultMatrix[i] %= 26; // Mod 26 needs to be used to make sure that the values correspond to an alphabetic index
             }
-            char letterAtIndex = alphabet.charAt(resultMatrix[i]); // Translate index to char value
+            char letterAtIndex = (char) (resultMatrix[i] + 65);
             res += letterAtIndex;
         }
         System.out.print(res);
     }
- 
     /*
     This method will check to make sure that the key can be used 
     for the key matrix.  If the key is not invertable then it can not 
@@ -123,7 +120,7 @@ public class hill {
         }
         return boolVal;
     }
- 
+
     /* 
     Calculates the determinant of the inputted matrix. 
     This will be useful for different applications throughout the code when determining 
@@ -222,7 +219,6 @@ public class hill {
         System.out.println("\n\nInverse key:");
         System.out.print(invkey+"\n");
     }
- 
     /* 
     Method calculates the multiplicative inverse for the matrix.
     This is crucial when finding the modular inverse of a matrix
