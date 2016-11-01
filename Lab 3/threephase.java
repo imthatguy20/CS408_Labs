@@ -19,17 +19,16 @@ public class threephase{
                 // System.out.println(Integer.toBinaryString(keyX)); // Used for getting the binary representation of a number
                 System.out.println("Enter a number for 'n'");
                 keyNVals = new int[in.nextInt()];
-                System.out.println("Enter the values for the 'n' array:");
-                keyNVals[0] = in.nextInt();
-                if(checkNVals(keyNVals[0])){
-                    System.out.println("Valid");
+                for(int i = 0; i < keyNVals.length; i++){
+                    // Loop makes sure that only valid values are added to the array
+                    System.out.println("Enter value #"+i+" for the second key part:");
+                    keyNVals[i] = in.nextInt();
+                    while(!checkNVals(keyNVals[i])){
+                        System.out.println("Enter value #"+i+" for the second key part:");
+                        keyNVals[i] = in.nextInt();
+                    }
                 }
-                // for(int i = 0; i < keyNVals.length; i++){
-                //     // Loop makes sure that only valid values are added to the array
-                //     while(checkNVals()){
-                        
-                //     }
-                // }
+                //System.out.println(Arrays.toString(keyNVals)); // DEBUG
                 break;
             case "2":
                 // Write code for decryption only 
