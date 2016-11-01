@@ -14,10 +14,17 @@ public class threephase{
                 System.out.println("Enter the text to be encrypted:");
                 plainText = in.nextLine();
                 System.out.println("Enter a large value for 'X':");
-                keyX = in.nextLine();
+                keyX = in.nextInt();
+                // System.out.println(Integer.toBinaryString(keyX)); // Used for getting the binary representation of a number
                 System.out.println("Enter a number for 'n'");
                 keyNVals = new int[in.nextInt()];
-                System.out.println();
+                System.out.println("Enter the values for the 'n' array:");
+                for(int i = 0; i < keyNVals.length; i++){
+                    // Loop makes sure that only valid values are added to the array
+                    while(checkNVals()){
+
+                    }
+                }
                 break;
             case "2":
                 // Write code for decryption only 
@@ -44,6 +51,8 @@ public class threephase{
 
     // This checks to make sure that the 'n' values can be used or not
     private boolean checkNVals(int nValIn){
-        
+        if(nValIn >= ){
+
+        }
     }
 }
