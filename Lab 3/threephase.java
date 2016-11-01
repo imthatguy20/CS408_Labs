@@ -1,5 +1,6 @@
 
 import java.util.*;
+import java.lang.*;
 
 public class threephase{
     private static Scanner in = new Scanner(System.in);
@@ -19,12 +20,16 @@ public class threephase{
                 System.out.println("Enter a number for 'n'");
                 keyNVals = new int[in.nextInt()];
                 System.out.println("Enter the values for the 'n' array:");
-                for(int i = 0; i < keyNVals.length; i++){
-                    // Loop makes sure that only valid values are added to the array
-                    while(checkNVals()){
-
-                    }
+                keyNVals[0] = in.nextInt();
+                if(checkNVals(keyNVals[0])){
+                    System.out.println("Valid");
                 }
+                // for(int i = 0; i < keyNVals.length; i++){
+                //     // Loop makes sure that only valid values are added to the array
+                //     while(checkNVals()){
+                        
+                //     }
+                // }
                 break;
             case "2":
                 // Write code for decryption only 
@@ -50,9 +55,16 @@ public class threephase{
     // }
 
     // This checks to make sure that the 'n' values can be used or not
-    private boolean checkNVals(int nValIn){
-        if(nValIn >= ){
-
+    private static boolean checkNVals(int nValIn){
+        // Make sure that the value is within the bounds 
+        int lowerBound = ((int) Math.pow(2, Integer.toBinaryString(keyX).length()-1)) - keyX; // Lower bound as calculated
+        //System.out.println(lowerBound); // Bound works
+        int upperBound = ((int) Math.pow(2, Integer.toBinaryString(keyX).length())) - keyX - 255; // Upper bound as calculated
+        //System.out.println(upperBound); // Bound works
+        if(nValIn >= lowerBound && nValIn < upperBound){
+            return true;
+        } else {
+            return false;
         }
     }
 }
