@@ -47,6 +47,8 @@ public class hill {
     public static void codec(String line, String key, double squareRoot){
         if (squareRoot != (long) squareRoot)
             System.out.println("\nError: Invalid key length.  Does not form a square matrix!");
+        else if (key.length() != 4 && key.length() != 9)
+            System.out.println("\nError: Key can only be of length 4 or 9!");
         else {
             int s = (int) squareRoot;
             while(line.length() % s != 0) { // If the plaintext can not be dived evenly, add X until it can
@@ -70,8 +72,7 @@ public class hill {
         }
     }
     // Multiplies the key matrix and the specific row matrix for a chunk of text
-    public static void multiplyLineMatrixKeyMatrix(int length, char[] row)
-    {
+    public static void multiplyLineMatrixKeyMatrix(int length, char[] row) {
         resultMatrix = new int[length];
         int keyMatrixIndex, lineMatrixIndex;
         String res = "";
@@ -93,8 +94,7 @@ public class hill {
     be used.  This is required since the key must be inverted for 
     decryption.
     */
-    public static boolean invertableCheck(String key, int length)
-    {
+    public static boolean invertableCheck(String key, int length) {
         keyMatrix = new int[length][length];
         int c = 0;
         for (int i = 0; i < length; i++) {
@@ -108,7 +108,7 @@ public class hill {
         int trueOrFalse;
         boolean boolVal = false;
         determinant = determinant % 26;
-        trueOrFalse = determinant == 0 ? 0 : 
+        trueOrFalse = (determinant == 0) ? 0 : 
             (determinant % 2 == 0 || determinant % 13 == 0) ? 0 : 1; // If the key has a common factors with 26 it can not be used.
         switch(trueOrFalse){
             case 0: // If the determinant is zero the key can not be used
@@ -126,8 +126,7 @@ public class hill {
     This will be useful for different applications throughout the code when determining 
     if there will be an inverse and then for finding the inverse of key matrix.
     */
-    public static int calculateDeterminant(int matrix[][], int size)
-    {
+    public static int calculateDeterminant(int matrix[][], int size) {
         int res = 0, topRowVal, subDeterminant;
         double multiplier = 0;
         switch(size){
@@ -163,8 +162,7 @@ public class hill {
     }
 
      // Calculates the inverse of the key matrix for decryption
-    public static void calculateInverseMatrix(int inputMatrix[][], int size)
-    {
+    public static void calculateInverseMatrix(int inputMatrix[][], int size) {
         int res[][] = new int[size][size]; // Matrix to store first portion end result values after all ops
         int inverseMatrix[][] = new int[size][size]; // Stores inverse matrix
         int preResultMat[][] = new int[size][size]; // Stores the matrix before all inverse ops are done
