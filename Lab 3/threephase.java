@@ -6,6 +6,7 @@ public class threephase{
     private static Scanner in = new Scanner(System.in);
     private static int keyX = 0, keyY = 0;
     private static int[] keyNVals;
+    private static int[] plainTextASCII;
     private static String plainText;
 
     public static void main(String[] args){
@@ -16,6 +17,7 @@ public class threephase{
                 plainText = in.nextLine();
                 System.out.println("Enter a large value for 'X':");
                 keyX = in.nextInt();
+                addKeyXToChars(plainText);
                 // System.out.println(Integer.toBinaryString(keyX)); // Used for getting the binary representation of a number
                 System.out.println("Enter a number for 'n'");
                 keyNVals = new int[in.nextInt()];
@@ -65,5 +67,13 @@ public class threephase{
         } else {
             return false;
         }
+    }
+
+    private static void addKeyXToChars(String plainTextIn){
+        plainTextASCII = new int[plainTextIn.length()];
+        for(int i = 0; i < plainTextIn.length(); i++){
+            plainTextASCII[i] = (int) plainTextIn.charAt(i) + keyX; // Convert to ASCII and add first part of the key.
+            //System.out.println(Arrays.toString(plainTextASCII)); // DEBUG
+        } 
     }
 }
