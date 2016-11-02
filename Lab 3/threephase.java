@@ -30,6 +30,7 @@ public class threephase{
                         keyNVals[i] = in.nextInt();
                     }
                 }
+                addSecondPhaseVals(plainTextASCII);
                 //System.out.println(Arrays.toString(keyNVals)); // DEBUG
                 break;
             case "2":
@@ -69,11 +70,22 @@ public class threephase{
         }
     }
 
+    // Adds the first part of the key to the plain text ASCII values for each char
     private static void addKeyXToChars(String plainTextIn){
         plainTextASCII = new int[plainTextIn.length()];
         for(int i = 0; i < plainTextIn.length(); i++){
             plainTextASCII[i] = (int) plainTextIn.charAt(i) + keyX; // Convert to ASCII and add first part of the key.
             //System.out.println(Arrays.toString(plainTextASCII)); // DEBUG
         } 
+    }
+
+    // Adds the second part of the key to the values from the previous round
+    private static void addSecondPhaseVals(int[] asciiWithX){
+        // System.out.println(Arrays.toString(asciiWithX)); // DEBUG
+        // System.out.println(Arrays.toString(keyNVals)); // DEBUG
+        for(int i = 0; i < asciiWithX.length; i++){
+            asciiWithX[i] += keyNVals[i % (asciiWithX.length-1)]; // Allows loop back when all 'n' vals have been used
+            // System.out.println(Arrays.toString(asciiWithX)); // DEBUG
+        }
     }
 }
