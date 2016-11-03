@@ -17,7 +17,7 @@ public class threephase{
                 plainText = in.nextLine();
                 System.out.println("Enter a large value for 'X':");
                 keyX = in.nextInt();
-                addKeyXToChars(plainText);
+                phaseOneEnc(plainText);
                 // System.out.println(Integer.toBinaryString(keyX)); // Used for getting the binary representation of a number
                 System.out.println("Enter a number for 'n'");
                 keyNVals = new int[in.nextInt()];
@@ -30,7 +30,7 @@ public class threephase{
                         keyNVals[i] = in.nextInt();
                     }
                 }
-                addSecondPhaseVals(plainTextASCII);
+                phaseTwoEnc(plainTextASCII);
                 //System.out.println(Arrays.toString(keyNVals)); // DEBUG
                 break;
             case "2":
@@ -71,7 +71,7 @@ public class threephase{
     }
 
     // Adds the first part of the key to the plain text ASCII values for each char
-    private static void addKeyXToChars(String plainTextIn){
+    private static void phaseOneEnc(String plainTextIn){
         plainTextASCII = new int[plainTextIn.length()];
         for(int i = 0; i < plainTextIn.length(); i++){
             plainTextASCII[i] = (int) plainTextIn.charAt(i) + keyX; // Convert to ASCII and add first part of the key.
@@ -80,11 +80,15 @@ public class threephase{
     }
 
     // Adds the second part of the key to the values from the previous round
-    private static void addSecondPhaseVals(int[] asciiWithX){
+    private static void phaseTwoEnc(int[] asciiWithX){
         // System.out.println(Arrays.toString(asciiWithX)); // DEBUG
         // System.out.println(Arrays.toString(keyNVals)); // DEBUG
+        int j = 0;
         for(int i = 0; i < asciiWithX.length; i++){
-            asciiWithX[i] += keyNVals[i % (asciiWithX.length-1)]; // Allows loop back when all 'n' vals have been used
+            asciiWithX[i] += keyNVals[j]; // Allows loop back when all 'n' vals have been used
+            j++;
+            if(j == keyNVals.length)
+                j = 0;
             // System.out.println(Arrays.toString(asciiWithX)); // DEBUG
         }
     }
