@@ -7,7 +7,8 @@ public class threephase{
     private static int keyX = 0, keyY = 0;
     private static int[] keyNVals;
     private static int[] plainTextASCII;
-    private static String plainText;
+    private static String plainText; // String to be encrypted
+    private static String encStringRes = ""; // Resulting string from the encryption
 
     public static void main(String[] args){
         switch(args[0]){ // Switch on the user choice to encrypt, decrypt, or do both.
@@ -30,7 +31,11 @@ public class threephase{
                         keyNVals[i] = in.nextInt();
                     }
                 }
+                System.out.println("Enter a large value for 'Y':");
+                keyY = in.nextInt();
                 phaseTwoEnc(plainTextASCII);
+                phaseThreeEnc(plainTextASCII);
+                System.out.println(encStringRes);
                 //System.out.println(Arrays.toString(keyNVals)); // DEBUG
                 break;
             case "2":
@@ -91,5 +96,18 @@ public class threephase{
                 j = 0;
             // System.out.println(Arrays.toString(asciiWithX)); // DEBUG
         }
+    }
+
+    /* This will take the result from phase two and run the XOR 
+       opperation on it with the block size of the 'Y' value.
+       This also will concatinate all of the results with each
+       other to get the end result. */ 
+    private static String phaseThreeEnc(int[] phaseTwoResult){
+        for(int block : phaseTwoResult){
+            // System.out.println(Integer.toBinaryString(block)); // DEBUG
+            encStringRes += Integer.toBinaryString(block);
+            // System.out.println(encStringRes); // DEBUG
+        }
+        return encStringRes;
     }
 }
