@@ -104,24 +104,29 @@ public class threephase{
        other to get the end result. */ 
     private static String phaseThreeEnc(int[] phaseTwoResult){
         // Convert to a binary string
+        StringBuilder encBitString = new StringBuilder();
         for(int block : phaseTwoResult){
             // System.out.println(Integer.toBinaryString(block)); // DEBUG
             encStringRes += Integer.toBinaryString(block);
             // System.out.println(encStringRes); // DEBUG
         }
-        // XOR with the binary equivalent of Y
-        char[] keyYArray = Integer.toBinaryString(keyY).toCharArray();
-        char[] encStringResArray = encStringRes.toCharArray();
-        System.out.println(keyYArray.length); // DEBUG
-        System.out.println(encStringResArray); // DEBUG
+        // System.out.println(keyYArray[0]); // DEBUG
+        // System.out.println(encStringResArray); // DEBUG
         int j = 0;
-        for(int i = 0; i < encStringResArray.length; i++){
-            encStringResArray[i] ^= keyYArray[j];
-            // System.out.println(j); // DEBUG
-            j++;
-            if(j == keyYArray.length)
-                j = 0;
+        boolean state = true;
+        String element = "";
+        ArrayList<String> divideBinaryArray = new ArrayList<String>();
+        while(j < encStringRes.length()){
+            for(int i = 0; i < Integer.toBinaryString(keyY).length(); i++){
+                if(j != encStringRes.length()){
+                    element += encStringRes.charAt(j);
+                    j++;
+                }
+            }
+            divideBinaryArray.add(element);
+            element = "";
         }
-        return Arrays.toString(encStringResArray);
+        System.out.println(Arrays.toString(divideBinaryArray.toArray()));
+        return "";
     }
 }
