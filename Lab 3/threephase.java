@@ -145,20 +145,25 @@ public class threephase{
         StringBuilder ct = new StringBuilder();
         String section = "";
         ArrayList<String> dividedBitString = new ArrayList<String>();
-        System.out.print(bitString.length());
+        // System.out.print(bitString.length());
         int j = 0;
         for(int i = 0; i < bitString.length(); i++){
-            if(j != 8){
                 section += bitString.charAt(i);
                 // System.out.println(section); // DEBUG
                 j++;
-            }
-            else{
-                j = 0;
-                dividedBitString.add(section);
-                section = "";
-            }
+                if(j == 8){
+                    j = 0;
+                    dividedBitString.add(section);
+                    section = "";
+                }
         } // TODO Some bits are being skipped when moving to divided string
-        System.out.println(dividedBitString.toString());
+        // System.out.println(dividedBitString.toString()); // DEBUG
+        for(String resultSect : dividedBitString){
+            System.out.println(resultSect);
+            char c; 
+            c = (char) Integer.parseInt(resultSect, 2);
+            ct.append(c);
+        }
+        System.out.println(ct.toString());
     }
 }
