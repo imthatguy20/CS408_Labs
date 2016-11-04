@@ -1,13 +1,14 @@
 
 import java.util.*;
 import java.lang.*;
+import java.math.*;
 
 public class threephase{
     private static Scanner in = new Scanner(System.in);
     private static int keyX = 0, keyY = 0;
     private static int[] keyNVals;
     private static int[] plainTextASCII;
-    private static String plainText; // String to be encrypted
+    private static String plainText, keyYBitString; // String to be encrypted
     private static String encStringRes = ""; // Resulting string from the encryption
 
     public static void main(String[] args){
@@ -33,9 +34,10 @@ public class threephase{
                 }
                 System.out.println("Enter a large value for 'Y':");
                 keyY = in.nextInt();
+                keyYBitString = Integer.toBinaryString(keyY);
                 phaseTwoEnc(plainTextASCII);
                 phaseThreeEnc(plainTextASCII);
-                System.out.println(encStringRes);
+                //System.out.println(encStringRes);
                 //System.out.println(Arrays.toString(keyNVals)); // DEBUG
                 break;
             case "2":
@@ -104,6 +106,11 @@ public class threephase{
        other to get the end result. */ 
     private static String phaseThreeEnc(int[] phaseTwoResult){
         // Convert to a binary string
+        int j = 0;
+        boolean state = true;
+        String element = "";
+        ArrayList<String> divideBinaryArray = new ArrayList<String>();
+        String lastRes = "";
         StringBuilder encBitString = new StringBuilder();
         for(int block : phaseTwoResult){
             // System.out.println(Integer.toBinaryString(block)); // DEBUG
@@ -112,10 +119,6 @@ public class threephase{
         }
         // System.out.println(keyYArray[0]); // DEBUG
         // System.out.println(encStringResArray); // DEBUG
-        int j = 0;
-        boolean state = true;
-        String element = "";
-        ArrayList<String> divideBinaryArray = new ArrayList<String>();
         while(j < encStringRes.length()){
             for(int i = 0; i < Integer.toBinaryString(keyY).length(); i++){
                 if(j != encStringRes.length()){
@@ -126,7 +129,22 @@ public class threephase{
             divideBinaryArray.add(element);
             element = "";
         }
-        System.out.println(Arrays.toString(divideBinaryArray.toArray()));
+        j = 0;
+        for(String sect : divideBinaryArray){
+            String temp = "";
+            for(int i = 0; i < sect.length(); i++){
+                if(j == 0)
+                    temp += (sect.charAt(i) == keyYBitString.charAt(i)) ? "0" : "1";
+                else 
+                    temp += (sect.charAt(i) == lastRes.charAt(i)) ? "0" : "1";
+            }
+            j++;
+            lastRes = temp;
+            temp = "";
+            encBitString.append(lastRes);
+            System.out.println(encBitString.toString());
+        }
+        //System.out.println(Arrays.toString(divideBinaryArray.toArray()));
         return "";
     }
 }
