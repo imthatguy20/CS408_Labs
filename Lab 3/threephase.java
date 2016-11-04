@@ -52,17 +52,6 @@ public class threephase{
         }
     }
 
-    // Method runs the encryption portion of the function
-    // private int encrypt(){
-
-    // }
-
-
-    // // Method runs the decryption portion of the program
-    // private String decrypt(){
-
-    // }
-
     // This checks to make sure that the 'n' values can be used or not
     private static boolean checkNVals(int nValIn){
         // Make sure that the value is within the bounds 
@@ -104,7 +93,7 @@ public class threephase{
        opperation on it with the block size of the 'Y' value.
        This also will concatinate all of the results with each
        other to get the end result. */ 
-    private static String phaseThreeEnc(int[] phaseTwoResult){
+    private static void phaseThreeEnc(int[] phaseTwoResult){
         // Convert to a binary string
         int j = 0;
         boolean state = true;
@@ -142,9 +131,34 @@ public class threephase{
             lastRes = temp;
             temp = "";
             encBitString.append(lastRes);
-            System.out.println(encBitString.toString());
         }
         //System.out.println(Arrays.toString(divideBinaryArray.toArray()));
-        return "";
+        while((encBitString.toString().length() % 8) != 0){
+            encBitString.append("0");
+        }
+        System.out.println(encBitString.toString());
+        bitStringToCT(encBitString.toString());
+    }
+    
+    // Method converts the bitstring from the last result to the CT.
+    private static void bitStringToCT(String bitString){
+        StringBuilder ct = new StringBuilder();
+        String section = "";
+        ArrayList<String> dividedBitString = new ArrayList<String>();
+        System.out.print(bitString.length());
+        int j = 0;
+        for(int i = 0; i < bitString.length(); i++){
+            if(j != 8){
+                section += bitString.charAt(i);
+                // System.out.println(section); // DEBUG
+                j++;
+            }
+            else{
+                j = 0;
+                dividedBitString.add(section);
+                section = "";
+            }
+        } // TODO Some bits are being skipped when moving to divided string
+        System.out.println(dividedBitString.toString());
     }
 }
