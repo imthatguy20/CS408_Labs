@@ -270,8 +270,9 @@ public class threephase{
         for(int i = 0; i < decBitString.length(); i++){
             temp += decBitString.charAt(i);
             j++;
-            if(j > Integer.toBinaryString(keyX).length()){
+            if(j >= Integer.toBinaryString(keyX).length()){
                 j = 0;
+                System.out.println(temp);
                 resultingIntVals.add(Integer.parseInt(temp, 2));
                 temp = "";
             }
