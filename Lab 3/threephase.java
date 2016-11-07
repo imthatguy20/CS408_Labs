@@ -68,6 +68,7 @@ public class threephase{
                 System.out.println("\nB = "+keyYBitString.length()+"\n");
                 phaseOneDec(cipherText);
                 phaseTwoDec(phaseOneRes);
+                phaseThreeDec(plainTextASCII);
                 break;
             case "3":
                 // Write code to do both opperations
@@ -259,7 +260,7 @@ public class threephase{
             temp = "";
         }
         phaseOneRes = decBitString.toString();
-        // System.out.println("DEC BT: "+decBitString); // DEBUG
+        System.out.println("Phase #1: "+decBitString); // DEBUG
     }
     
     //  Runs the second part of the of the decryption 
@@ -272,12 +273,36 @@ public class threephase{
             j++;
             if(j >= Integer.toBinaryString(keyX).length()){
                 j = 0;
-                System.out.println(temp);
+                //System.out.println(temp); // DEBUG
                 resultingIntVals.add(Integer.parseInt(temp, 2));
                 temp = "";
             }
         }
-        System.out.println(Arrays.toString(resultingIntVals.toArray()));
+        plainTextASCII = new int[resultingIntVals.size()];
+        for(int i = 0; i < resultingIntVals.size(); i++){
+            plainTextASCII[i] = resultingIntVals.get(i);
+        }
+        j = 0;
+        for(int t = 0; t < plainTextASCII.length; t++){
+            plainTextASCII[t] -= keyNVals[j]; // Allows loop back when all 'n' vals have been used
+            j++;
+            if(j == keyNVals.length)
+                j = 0;
+            // System.out.println(Arrays.toString(asciiWithX)); // DEBUG
+        }
+        System.out.println("Phase #2: "+Arrays.toString(plainTextASCII));
+    }
+    
+    //
+    public static void phaseThreeDec(int[] phaseTwoRes){
+        StringBuilder pt = new StringBuilder();
+        for(int i = 0; i < phaseTwoRes.length; i++){
+            plainTextASCII[i] -= keyX; // Convert to ASCII and add first part of the key.
+            //System.out.println(Arrays.toString(plainTextASCII)); // DEBUG
+            pt.append((char)plainTextASCII[i]);
+        }
+        System.out.println("Phase #3: "+Arrays.toString(phaseTwoRes));
+        System.out.println("\nPlain Text: "+pt.toString());
     }
 }
    
