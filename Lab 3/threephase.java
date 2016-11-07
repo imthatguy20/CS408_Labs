@@ -19,10 +19,12 @@ public class threephase{
                 plainText = in.nextLine();
                 System.out.println("Enter a large value for 'X':");
                 keyX = in.nextInt();
+                System.out.println("\nP = "+Integer.toBinaryString(keyX).length()+"\n");
                 phaseOneEnc(plainText);
                 // System.out.println(Integer.toBinaryString(keyX)); // Used for getting the binary representation of a number
                 System.out.println("Enter a number for 'n'");
                 keyNVals = new int[in.nextInt()];
+                System.out.println();
                 for(int i = 0; i < keyNVals.length; i++){
                     // Loop makes sure that only valid values are added to the array
                     System.out.println("Enter value #"+i+" for the second key part:");
@@ -32,9 +34,10 @@ public class threephase{
                         keyNVals[i] = in.nextInt();
                     }
                 }
-                System.out.println("Enter a large value for 'Y':");
+                System.out.println("\nEnter a large value for 'Y':");
                 keyY = in.nextInt();
                 keyYBitString = Integer.toBinaryString(keyY);
+                System.out.println("\nB = "+keyYBitString.length()+"\n");
                 phaseTwoEnc(plainTextASCII);
                 phaseThreeEnc(plainTextASCII);
                 //System.out.println(encStringRes);
@@ -136,7 +139,7 @@ public class threephase{
         while((encBitString.toString().length() % 8) != 0){
             encBitString.append("0");
         }
-        System.out.println(encBitString.toString());
+        System.out.println("Encrypted Bit-String: "+encBitString.toString());
         bitStringToCT(encBitString.toString());
     }
     
@@ -159,11 +162,11 @@ public class threephase{
         } // TODO Some bits are being skipped when moving to divided string
         // System.out.println(dividedBitString.toString()); // DEBUG
         for(String resultSect : dividedBitString){
-            System.out.println(resultSect);
+            // System.out.println(resultSect); // DEBUG
             char c; 
             c = (char) Integer.parseInt(resultSect, 2);
             ct.append(c);
         }
-        System.out.println(ct.toString());
+        System.out.println("Cipher Text: "+ct.toString());
     }
 }
