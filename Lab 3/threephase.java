@@ -8,7 +8,7 @@ public class threephase{
     private static int keyX = 0, keyY = 0;
     private static int[] keyNVals;
     private static int[] plainTextASCII;
-    private static String plainText, keyYBitString; // String to be encrypted
+    private static String plainText, keyYBitString, cipherText; // String to be encrypted
     private static String encStringRes = ""; // Resulting string from the encryption
 
     public static void main(String[] args){
@@ -20,7 +20,6 @@ public class threephase{
                 System.out.println("Enter a large value for 'X':");
                 keyX = in.nextInt();
                 System.out.println("\nP = "+Integer.toBinaryString(keyX).length()+"\n");
-                phaseOneEnc(plainText);
                 // System.out.println(Integer.toBinaryString(keyX)); // Used for getting the binary representation of a number
                 System.out.println("Enter a number for 'n'");
                 keyNVals = new int[in.nextInt()];
@@ -38,13 +37,36 @@ public class threephase{
                 keyY = in.nextInt();
                 keyYBitString = Integer.toBinaryString(keyY);
                 System.out.println("\nB = "+keyYBitString.length()+"\n");
+                phaseOneEnc(plainText);
                 phaseTwoEnc(plainTextASCII);
                 phaseThreeEnc(plainTextASCII);
                 //System.out.println(encStringRes);
                 //System.out.println(Arrays.toString(keyNVals)); // DEBUG
                 break;
             case "2":
-                // Write code for decryption only 
+                // Code will run the decryption portion only
+                System.out.println("Enter the text to be decrypted:");
+                cipherText = in.nextLine();
+                System.out.println("Enter the value for the 'X' portion of the key:");
+                keyX = in.nextInt();
+                System.out.println("\nP = "+Integer.toBinaryString(keyX).length()+"\n");
+                System.out.println("Enter the the value of 'n' used for encryption:");
+                keyNVals = new int[in.nextInt()];
+                System.out.println();
+                for(int i = 0; i < keyNVals.length; i++){
+                    // Loop makes sure that only valid values are added to the array
+                    System.out.println("Enter value #"+i+" for the second key part:");
+                    keyNVals[i] = in.nextInt();
+                    while(!checkNVals(keyNVals[i])){
+                        System.out.println("Enter value #"+i+" for the second key part:");
+                        keyNVals[i] = in.nextInt();
+                    }
+                }
+                System.out.println("Enter the value used for 'Y':");
+                keyY = in.nextInt();
+                keyYBitString = Integer.toBinaryString(keyY);
+                System.out.println("\nB = "+keyYBitString.length()+"\n");
+                phaseOneDec(cipherText);
                 break;
             case "3":
                 // Write code to do both opperations
@@ -55,6 +77,11 @@ public class threephase{
         }
     }
 
+    /*
+    ----------------------------------------------------------------------------
+                                ENCRYPTION METHODS
+    ----------------------------------------------------------------------------
+    */
     // This checks to make sure that the 'n' values can be used or not
     private static boolean checkNVals(int nValIn){
         // Make sure that the value is within the bounds 
@@ -76,6 +103,7 @@ public class threephase{
             plainTextASCII[i] = (int) plainTextIn.charAt(i) + keyX; // Convert to ASCII and add first part of the key.
             //System.out.println(Arrays.toString(plainTextASCII)); // DEBUG
         } 
+        System.out.println("Phase #1: "+Arrays.toString(plainTextASCII));
     }
 
     // Adds the second part of the key to the values from the previous round
@@ -90,6 +118,7 @@ public class threephase{
                 j = 0;
             // System.out.println(Arrays.toString(asciiWithX)); // DEBUG
         }
+        System.out.println("Phase #2: "+Arrays.toString(asciiWithX));
     }
 
     /* This will take the result from phase two and run the XOR 
@@ -139,7 +168,7 @@ public class threephase{
         while((encBitString.toString().length() % 8) != 0){
             encBitString.append("0");
         }
-        System.out.println("Encrypted Bit-String: "+encBitString.toString());
+        System.out.println("Phase #3: "+encBitString.toString()+"\n");
         bitStringToCT(encBitString.toString());
     }
     
@@ -168,5 +197,47 @@ public class threephase{
             ct.append(c);
         }
         System.out.println("Cipher Text: "+ct.toString());
+    }
+    
+     /*
+    ----------------------------------------------------------------------------
+                                DECRYPTION METHODS
+    ----------------------------------------------------------------------------
+    */
+    
+    // Runs the first part of the decryption process 
+    public static void phaseOneDec(String cipherText){
+        StringBuilder cipherTextBitString = new StringBuilder();
+        String section = "";
+        ArrayList<String> dividedBitString = new ArrayList<String>();
+        int i = 0;
+        for(char c : cipherText.toCharArray()){
+            while((Integer.toBinaryString((int)c).length() + i) != 8){ // Adds 0 to the end of the bit string to make up for trimmed leading zeros
+                cipherTextBitString.append("0");
+                i++;
+            }
+            i = 0;
+            cipherTextBitString.append(Integer.toBinaryString((int)c));
+            // System.out.println(cipherTextBitString); // DEBUG
+        }
+       // System.out.println(cipherTextBitString.length());  // DEBUG
+       while((cipherTextBitString.length() % Integer.toBinaryString(keyX).length()) != 0){ // Trim all of the excess 0's
+           cipherTextBitString.deleteCharAt(cipherTextBitString.length()-1); // Reduces length and hence removes the last char
+       }
+      System.out.println(cipherTextBitString);
+       int j = 0;
+       for(int a = 0; a < cipherTextBitString.length(); a++){
+            section += cipherTextBitString.charAt(a);
+            // System.out.println(section); // DEBUG
+            j++;
+            if(j == keyYBitString.length()){
+                j = 0;
+                dividedBitString.add(section);
+                section = "";
+            }
+            if (a == (cipherTextBitString.length()-1)) // Add the very last part even though it might not be 
+                dividedBitString.add(section);
+        }
+        System.out.println(Arrays.toString(dividedBitString.toArray()));
     }
 }
