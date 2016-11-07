@@ -8,7 +8,7 @@ public class threephase{
     private static int keyX = 0, keyY = 0;
     private static int[] keyNVals;
     private static int[] plainTextASCII;
-    private static String plainText, keyYBitString, cipherText; // String to be encrypted
+    private static String plainText, keyYBitString, phaseOneRes, cipherText; // String to be encrypted
     private static String encStringRes = ""; // Resulting string from the encryption
 
     public static void main(String[] args){
@@ -67,6 +67,7 @@ public class threephase{
                 keyYBitString = Integer.toBinaryString(keyY);
                 System.out.println("\nB = "+keyYBitString.length()+"\n");
                 phaseOneDec(cipherText);
+                phaseTwoDec(phaseOneRes);
                 break;
             case "3":
                 // Write code to do both opperations
@@ -136,7 +137,7 @@ public class threephase{
         for(int block : phaseTwoResult){
             // System.out.println(Integer.toBinaryString(block)); // DEBUG
             encStringRes += Integer.toBinaryString(block);
-            // System.out.println(encStringRes); // DEBUG
+            System.out.println(encStringRes); // DEBUG
         }
         // System.out.println(keyYArray[0]); // DEBUG
         // System.out.println(encStringResArray); // DEBUG
@@ -208,7 +209,9 @@ public class threephase{
     // Runs the first part of the decryption process 
     public static void phaseOneDec(String cipherText){
         StringBuilder cipherTextBitString = new StringBuilder();
+        StringBuilder decBitString = new StringBuilder();
         String section = "";
+        String lastSect = "";
         ArrayList<String> dividedBitString = new ArrayList<String>();
         int i = 0;
         for(char c : cipherText.toCharArray()){
@@ -224,20 +227,57 @@ public class threephase{
        while((cipherTextBitString.length() % Integer.toBinaryString(keyX).length()) != 0){ // Trim all of the excess 0's
            cipherTextBitString.deleteCharAt(cipherTextBitString.length()-1); // Reduces length and hence removes the last char
        }
-      System.out.println(cipherTextBitString);
+    // System.out.println("CT: "+cipherTextBitString); // DEBUG
        int j = 0;
        for(int a = 0; a < cipherTextBitString.length(); a++){
             section += cipherTextBitString.charAt(a);
-            // System.out.println(section); // DEBUG
+            //System.out.println(section); // DEBUG
             j++;
             if(j == keyYBitString.length()){
                 j = 0;
                 dividedBitString.add(section);
+                //System.out.println(section); // DEBUG
                 section = "";
             }
             if (a == (cipherTextBitString.length()-1)) // Add the very last part even though it might not be 
                 dividedBitString.add(section);
         }
-        System.out.println(Arrays.toString(dividedBitString.toArray()));
+        //System.out.println(Arrays.toString(dividedBitString.toArray())); //DEBUG
+         j = 0;
+        for(String sect : dividedBitString){
+            String temp = "";
+            for(int b = 0; b < sect.length(); b++){
+                if(j == 0)
+                    temp += (sect.charAt(b) == keyYBitString.charAt(b)) ? "0" : "1";
+                else 
+                    temp += (sect.charAt(b) == lastSect.charAt(b)) ? "0" : "1";
+                //System.out.println(temp); // DEBUG
+            }
+            j++;
+            lastSect = sect;
+            decBitString.append(temp);
+            temp = "";
+        }
+        phaseOneRes = decBitString.toString();
+        // System.out.println("DEC BT: "+decBitString); // DEBUG
+    }
+    
+    //  Runs the second part of the of the decryption 
+    public static void phaseTwoDec(String decBitString){
+        ArrayList<Integer> resultingIntVals = new ArrayList<Integer>();
+        String temp = "";
+        int j = 0;
+        for(int i = 0; i < decBitString.length(); i++){
+            temp += decBitString.charAt(i);
+            j++;
+            if(j > Integer.toBinaryString(keyX).length()){
+                j = 0;
+                resultingIntVals.add(Integer.parseInt(temp, 2));
+                temp = "";
+            }
+        }
+        System.out.println(Arrays.toString(resultingIntVals.toArray()));
     }
 }
+   
+    
