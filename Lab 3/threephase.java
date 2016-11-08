@@ -72,6 +72,36 @@ public class threephase{
                 break;
             case "3":
                 // Write code to do both opperations
+                System.out.println("Enter the text to be encrypted:");
+                plainText = in.nextLine();
+                System.out.println("Enter a large value for 'X':");
+                keyX = in.nextInt();
+                System.out.println("\nP = "+Integer.toBinaryString(keyX).length()+"\n");
+                // System.out.println(Integer.toBinaryString(keyX)); // Used for getting the binary representation of a number
+                System.out.println("Enter a number for 'n'");
+                keyNVals = new int[in.nextInt()];
+                System.out.println();
+                for(int i = 0; i < keyNVals.length; i++){
+                    // Loop makes sure that only valid values are added to the array
+                    System.out.println("Enter value #"+i+" for the second key part:");
+                    keyNVals[i] = in.nextInt();
+                    while(!checkNVals(keyNVals[i])){
+                        System.out.println("Enter value #"+i+" for the second key part:");
+                        keyNVals[i] = in.nextInt();
+                    }
+                }
+                System.out.println("\nEnter a large value for 'Y':");
+                keyY = in.nextInt();
+                keyYBitString = Integer.toBinaryString(keyY);
+                System.out.println("\nB = "+keyYBitString.length()+"\n");
+                System.out.println("***** ENCRYPTION PHASES *****\n");
+                phaseOneEnc(plainText);
+                phaseTwoEnc(plainTextASCII);
+                phaseThreeEnc(plainTextASCII);
+                System.out.println("***** DECRYPTION PHASES *****\n");
+                phaseOneDec(plainText);
+                phaseTwoDec(phaseOneRes);
+                phaseThreeDec(plainTextASCII);
                 break;
             default: // Case executes if the ussage is not right.
                 System.out.println("USAGE: java threephase [1] [2] [3]");
@@ -138,7 +168,7 @@ public class threephase{
         for(int block : phaseTwoResult){
             // System.out.println(Integer.toBinaryString(block)); // DEBUG
             encStringRes += Integer.toBinaryString(block);
-            System.out.println(encStringRes); // DEBUG
+            //System.out.println(encStringRes); // DEBUG
         }
         // System.out.println(keyYArray[0]); // DEBUG
         // System.out.println(encStringResArray); // DEBUG
@@ -198,7 +228,8 @@ public class threephase{
             c = (char) Integer.parseInt(resultSect, 2);
             ct.append(c);
         }
-        System.out.println("Cipher Text: "+ct.toString());
+        plainText = ct.toString();
+        System.out.println("Cipher Text: "+plainText+"\n");
     }
     
      /*
@@ -302,7 +333,7 @@ public class threephase{
             pt.append((char)plainTextASCII[i]);
         }
         System.out.println("Phase #3: "+Arrays.toString(phaseTwoRes));
-        System.out.println("\nPlain Text: "+pt.toString());
+        System.out.println("\nPlain Text: "+pt.toString()+"\n");
     }
 }
    
