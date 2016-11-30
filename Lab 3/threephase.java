@@ -53,6 +53,10 @@ public class threephase{
                 plainText = in.nextLine();
                 System.out.println("Enter a large value for 'X':");
                 keyX = in.nextInt();
+                while(keyX > 1792){
+                   System.out.println("Enter a large value for 'X':");
+                   keyX = in.nextInt(); 
+                }
                 System.out.println("\nP = "+Integer.toBinaryString(keyX).length()+"\n");
                 // System.out.println(Integer.toBinaryString(keyX)); // Used for getting the binary representation of a number
                 System.out.println("Enter a number for 'n'");
@@ -77,6 +81,10 @@ public class threephase{
                 cipherText = in.nextLine();
                 System.out.println("Enter the value for the 'X' portion of the key:");
                 keyX = in.nextInt();
+                while(keyX > 1792){
+                   System.out.println("Enter a large value for 'X':");
+                   keyX = in.nextInt(); 
+                }
                 System.out.println("\nP = "+Integer.toBinaryString(keyX).length()+"\n");
                 System.out.println("Enter the the value of 'n' used for encryption:");
                 keyNVals = new int[in.nextInt()];
@@ -100,6 +108,10 @@ public class threephase{
                 plainText = in.nextLine();
                 System.out.println("Enter a large value for 'X':");
                 keyX = in.nextInt();
+                while(keyX > 1792){
+                   System.out.println("Enter a large value for 'X':");
+                   keyX = in.nextInt(); 
+                }
                 System.out.println("\nP = "+Integer.toBinaryString(keyX).length()+"\n");
                 // System.out.println(Integer.toBinaryString(keyX)); // Used for getting the binary representation of a number
                 System.out.println("Enter a number for 'n'");
